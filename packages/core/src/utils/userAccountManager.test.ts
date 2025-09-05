@@ -29,8 +29,7 @@ describe('UserAccountManager', () => {
       path.join(os.tmpdir(), 'gemini-cli-test-home-'),
     );
     (os.homedir as Mock).mockReturnValue(tempHomeDir);
-    accountsFile = () =>
-      path.join(tempHomeDir, '.gemini', 'google_accounts.json');
+    accountsFile = () => path.join(tempHomeDir, '.tie', 'google_accounts.json');
     userAccountManager = new UserAccountManager();
   });
 

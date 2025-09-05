@@ -26,6 +26,10 @@ describe('validateNonInterActiveAuth', () => {
     delete process.env['GEMINI_API_KEY'];
     delete process.env['GOOGLE_GENAI_USE_VERTEXAI'];
     delete process.env['GOOGLE_GENAI_USE_GCA'];
+    // 清理自定义LLM环境变量
+    delete process.env['TIE_API_KEY'];
+    delete process.env['TIE_ENDPOINT'];
+    delete process.env['TIE_MODEL_NAME'];
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     processExitSpy = vi.spyOn(process, 'exit').mockImplementation((code) => {
       throw new Error(`process.exit(${code}) called`);
@@ -92,6 +96,22 @@ describe('validateNonInterActiveAuth', () => {
     expect(processExitSpy).toHaveBeenCalledWith(1);
   });
 
+  it('uses CUSTOM_LLM if all custom LLM environment variables are set', async () => {
+    process.env['TIE_API_KEY'] = 'test-key';
+    process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+    process.env['TIE_MODEL_NAME'] = 'test-model';
+    const nonInteractiveConfig = {
+      refreshAuth: refreshAuthMock,
+    };
+    await validateNonInteractiveAuth(
+      undefined,
+      undefined,
+      nonInteractiveConfig,
+      mockSettings,
+    );
+    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.CUSTOM_LLM);
+  });
+
   it('uses LOGIN_WITH_GOOGLE if GOOGLE_GENAI_USE_GCA is set', async () => {
     process.env['GOOGLE_GENAI_USE_GCA'] = 'true';
     const nonInteractiveConfig = {
@@ -151,7 +171,10 @@ describe('validateNonInterActiveAuth', () => {
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_VERTEX_AI);
   });
 
-  it('uses LOGIN_WITH_GOOGLE if GOOGLE_GENAI_USE_GCA is set, even with other env vars', async () => {
+  it('uses CUSTOM_LLM if all custom LLM env vars are set, even with other env vars', async () => {
+    process.env['TIE_API_KEY'] = 'test-key';
+    process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+    process.env['TIE_MODEL_NAME'] = 'test-model';
     process.env['GOOGLE_GENAI_USE_GCA'] = 'true';
     process.env['GEMINI_API_KEY'] = 'fake-key';
     process.env['GOOGLE_GENAI_USE_VERTEXAI'] = 'true';
@@ -166,10 +189,11 @@ describe('validateNonInterActiveAuth', () => {
       nonInteractiveConfig,
       mockSettings,
     );
-    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.LOGIN_WITH_GOOGLE);
+    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.CUSTOM_LLM);
   });
 
-  it('uses USE_VERTEX_AI if both GEMINI_API_KEY and GOOGLE_GENAI_USE_VERTEXAI are set', async () => {
+  it('uses GEMINI_API_KEY if both GEMINI_API_KEY and GOOGLE_GENAI_USE_GCA are set (no custom LLM)', async () => {
+    process.env['GOOGLE_GENAI_USE_GCA'] = 'true';
     process.env['GEMINI_API_KEY'] = 'fake-key';
     process.env['GOOGLE_GENAI_USE_VERTEXAI'] = 'true';
     process.env['GOOGLE_CLOUD_PROJECT'] = 'test-project';
@@ -183,7 +207,24 @@ describe('validateNonInterActiveAuth', () => {
       nonInteractiveConfig,
       mockSettings,
     );
-    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_VERTEX_AI);
+    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_GEMINI);
+  });
+
+  it('uses GEMINI_API_KEY if both GEMINI_API_KEY and GOOGLE_GENAI_USE_VERTEXAI are set', async () => {
+    process.env['GEMINI_API_KEY'] = 'fake-key';
+    process.env['GOOGLE_GENAI_USE_VERTEXAI'] = 'true';
+    process.env['GOOGLE_CLOUD_PROJECT'] = 'test-project';
+    process.env['GOOGLE_CLOUD_LOCATION'] = 'us-central1';
+    const nonInteractiveConfig = {
+      refreshAuth: refreshAuthMock,
+    };
+    await validateNonInteractiveAuth(
+      undefined,
+      undefined,
+      nonInteractiveConfig,
+      mockSettings,
+    );
+    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_GEMINI);
   });
 
   it('uses USE_GEMINI if GOOGLE_GENAI_USE_VERTEXAI is false, GEMINI_API_KEY is set, and project/location are available', async () => {

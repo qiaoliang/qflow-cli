@@ -1,4 +1,4 @@
-# Gemini CLI
+# Tie CLI
 
 [![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/npm/v/@google/gemini-cli)](https://www.npmjs.com/package/@google/gemini-cli)
@@ -6,9 +6,9 @@
 
 ![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
 
-Gemini CLI is an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model.
+Tie CLI is an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model.
 
-## 🚀 Why Gemini CLI?
+## 🚀 Why Tie CLI?
 
 - **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google account
 - **🧠 Powerful Gemini 2.5 Pro**: Access to 1M token context window
@@ -25,19 +25,19 @@ Gemini CLI is an open-source AI agent that brings the power of Gemini directly i
 
 ```bash
 # Using npx (no installation required)
-npx https://github.com/google-gemini/gemini-cli
+npx https://github.com/google-gemini/tie-cli
 ```
 
 #### Install globally with npm
 
 ```bash
-npm install -g @google/gemini-cli
+npm install -g @tiecode@tie-cli
 ```
 
 #### Install globally with Homebrew (macOS/Linux)
 
 ```bash
-brew install gemini-cli
+brew install tie-cli
 ```
 
 #### System Requirements
@@ -54,7 +54,7 @@ See [Releases](./docs/releases.md) for more details.
 New preview releases will be published each week at UTC 2359 on Tuesdays. These releases will not have been fully vetted and may contain regressions or other outstanding issues. Please help us test and install with `preview` tag.
 
 ```bash
-npm install -g @google/gemini-cli@preview
+npm install -g @tiecode@tie-cli@preview
 ```
 
 ### Stable
@@ -62,7 +62,7 @@ npm install -g @google/gemini-cli@preview
 - New stable releases will be published each week at UTC 2000 on Tuesdays, this will be the full promotion of last week's `preview` release + any bug fixes and validations. Use `latest` tag.
 
 ```bash
-npm install -g @google/gemini-cli@latest
+npm install -g @tiecode@tie-cli@latest
 ```
 
 ### Nightly
@@ -70,7 +70,7 @@ npm install -g @google/gemini-cli@latest
 - New releases will be published each week at UTC 0000 each day, This will be all changes from the main branch as represented at time of release. It should be assumed there are pending validations and issues. Use `nightly` tag.
 
 ```bash
-npm install -g @google/gemini-cli@nightly
+npm install -g @tiecode@tie-cli@nightly
 ```
 
 ## 📋 Key Features

@@ -49,9 +49,9 @@ function getOpenUrlsCommands(readmeUrl: string): string[] {
   return commands;
 }
 
-// Add Gemini CLI specific entries to .gitignore file
+// Add Tie CLI specific entries to .gitignore file
 export async function updateGitignore(gitRepoRoot: string): Promise<void> {
-  const gitignoreEntries = ['.gemini/', 'gha-creds-*.json'];
+  const gitignoreEntries = ['.tie/', 'gha-creds-*.json'];
 
   const gitignorePath = path.join(gitRepoRoot, '.gitignore');
   try {

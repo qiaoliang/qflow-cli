@@ -20,7 +20,7 @@ import { Storage } from './storage.js';
 
 describe('Storage – getGlobalSettingsPath', () => {
   it('returns path to ~/.gemini/settings.json', () => {
-    const expected = path.join(os.homedir(), '.gemini', 'settings.json');
+    const expected = path.join(os.homedir(), '.tie', 'settings.json');
     expect(Storage.getGlobalSettingsPath()).toBe(expected);
   });
 });
@@ -30,26 +30,22 @@ describe('Storage – additional helpers', () => {
   const storage = new Storage(projectRoot);
 
   it('getWorkspaceSettingsPath returns project/.gemini/settings.json', () => {
-    const expected = path.join(projectRoot, '.gemini', 'settings.json');
+    const expected = path.join(projectRoot, '.tie', 'settings.json');
     expect(storage.getWorkspaceSettingsPath()).toBe(expected);
   });
 
   it('getUserCommandsDir returns ~/.gemini/commands', () => {
-    const expected = path.join(os.homedir(), '.gemini', 'commands');
+    const expected = path.join(os.homedir(), '.tie', 'commands');
     expect(Storage.getUserCommandsDir()).toBe(expected);
   });
 
   it('getProjectCommandsDir returns project/.gemini/commands', () => {
-    const expected = path.join(projectRoot, '.gemini', 'commands');
+    const expected = path.join(projectRoot, '.tie', 'commands');
     expect(storage.getProjectCommandsDir()).toBe(expected);
   });
 
   it('getMcpOAuthTokensPath returns ~/.gemini/mcp-oauth-tokens.json', () => {
-    const expected = path.join(
-      os.homedir(),
-      '.gemini',
-      'mcp-oauth-tokens.json',
-    );
+    const expected = path.join(os.homedir(), '.tie', 'mcp-oauth-tokens.json');
     expect(Storage.getMcpOAuthTokensPath()).toBe(expected);
   });
 });

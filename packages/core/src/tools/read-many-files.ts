@@ -94,7 +94,7 @@ type FileProcessingResult =
 
 /**
  * Creates the default exclusion patterns including dynamic patterns.
- * This combines the shared patterns with dynamic patterns like GEMINI.md.
+ * This combines the shared patterns with dynamic patterns like TIE.md.
  * TODO(adh): Consider making this configurable or extendable through a command line argument.
  */
 function getDefaultExcludes(config?: Config): string[] {
@@ -117,9 +117,9 @@ class ReadManyFilesToolInvocation extends BaseToolInvocation<
 
   getDescription(): string {
     const allPatterns = [...this.params.paths, ...(this.params.include || [])];
-    const pathDesc = `using patterns: 
+    const pathDesc = `using patterns:
 ${allPatterns.join('`, `')}
- (within target directory: 
+ (within target directory:
 ${this.config.getTargetDir()}
 ) `;
 
@@ -140,7 +140,7 @@ ${this.config.getTargetDir()}
 
     let excludeDesc = `Excluding: ${
       finalExclusionPatternsForDescription.length > 0
-        ? `patterns like 
+        ? `patterns like
 ${finalExclusionPatternsForDescription
   .slice(0, 2)
   .join(

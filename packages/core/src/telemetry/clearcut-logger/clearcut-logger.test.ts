@@ -106,6 +106,19 @@ describe('ClearcutLogger', () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    // 清理可能影响 surface 检测的环境变量
+    delete process.env['CURSOR_TRACE_ID'];
+    delete process.env['CURSOR_AGENT'];
+    delete process.env['MONOSPACE_ENV'];
+    delete process.env['__COG_BASHRC_SOURCED'];
+    delete process.env['CLOUD_SHELL'];
+    delete process.env['CODESPACES'];
+    delete process.env['REPLIT_USER'];
+    delete process.env['EDITOR_IN_CLOUD_SHELL'];
+    delete process.env['TERM_PRODUCT'];
+    delete process.env['TERM_PROGRAM'];
+    delete process.env['SURFACE'];
+    delete process.env['GITHUB_SHA'];
   });
 
   function setup({

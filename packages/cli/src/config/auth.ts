@@ -4,11 +4,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { AuthType } from '@google/gemini-cli-core';
+import { AuthType, validateCustomLlmConfig } from '@google/gemini-cli-core';
 import { loadEnvironment, loadSettings } from './settings.js';
 
-export function validateAuthMethod(authMethod: string): string | null {
+export async function validateAuthMethod(
+  authMethod: string,
+): Promise<string | null> {
   loadEnvironment(loadSettings().merged);
+
+  // 添加自定义LLM验证
+  if (authMethod === AuthType.CUSTOM_LLM) {
+    try {
+      const validation = validateCustomLlmConfig();
+      if (!validation.isValid) {
+        return validation.errors.join('\n');
+      }
+      return null;
+    } catch (error) {
+      return `Failed to validate custom LLM configuration: ${error}`;
+    }
+  }
+
   if (
     authMethod === AuthType.LOGIN_WITH_GOOGLE ||
     authMethod === AuthType.CLOUD_SHELL

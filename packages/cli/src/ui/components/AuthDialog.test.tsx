@@ -19,6 +19,10 @@ describe('AuthDialog', () => {
     originalEnv = { ...process.env };
     process.env['GEMINI_API_KEY'] = '';
     process.env['GEMINI_DEFAULT_AUTH_TYPE'] = '';
+    // 清理自定义LLM环境变量
+    delete process.env['TIE_API_KEY'];
+    delete process.env['TIE_ENDPOINT'];
+    delete process.env['TIE_MODEL_NAME'];
     vi.clearAllMocks();
   });
 
@@ -67,6 +71,127 @@ describe('AuthDialog', () => {
     expect(lastFrame()).toContain(
       'GEMINI_API_KEY  environment variable not found',
     );
+  });
+
+  describe('CUSTOM_LLM environment variables', () => {
+    it('should detect CUSTOM_LLM environment variables', () => {
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'test-model';
+
+      const settings: LoadedSettings = new LoadedSettings(
+        {
+          settings: {
+            security: { auth: { selectedType: undefined } },
+            ui: { customThemes: {} },
+            mcpServers: {},
+          },
+          path: '',
+        },
+        {
+          settings: {},
+          path: '',
+        },
+        {
+          settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
+        },
+        {
+          settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
+        },
+        true,
+        new Set(),
+      );
+
+      const { lastFrame } = renderWithProviders(
+        <AuthDialog onSelect={() => {}} settings={settings} />,
+      );
+
+      expect(lastFrame()).toContain(
+        'Custom LLM configuration detected (CUSTOM_LLM_*)',
+      );
+    });
+
+    it('should not show the CUSTOM_LLM message if GEMINI_DEFAULT_AUTH_TYPE is set to something else', () => {
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'test-model';
+      process.env['GEMINI_DEFAULT_AUTH_TYPE'] = AuthType.LOGIN_WITH_GOOGLE;
+
+      const settings: LoadedSettings = new LoadedSettings(
+        {
+          settings: {
+            security: { auth: { selectedType: undefined } },
+            ui: { customThemes: {} },
+            mcpServers: {},
+          },
+          path: '',
+        },
+        {
+          settings: {},
+          path: '',
+        },
+        {
+          settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
+        },
+        {
+          settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
+        },
+        true,
+        new Set(),
+      );
+
+      const { lastFrame } = renderWithProviders(
+        <AuthDialog onSelect={() => {}} settings={settings} />,
+      );
+
+      expect(lastFrame()).not.toContain(
+        'Custom LLM configuration detected (CUSTOM_LLM_*)',
+      );
+    });
+
+    it('should show the CUSTOM_LLM message if GEMINI_DEFAULT_AUTH_TYPE is set to custom LLM', () => {
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'test-model';
+      process.env['GEMINI_DEFAULT_AUTH_TYPE'] = AuthType.CUSTOM_LLM;
+
+      const settings: LoadedSettings = new LoadedSettings(
+        {
+          settings: {
+            security: { auth: { selectedType: undefined } },
+            ui: { customThemes: {} },
+            mcpServers: {},
+          },
+          path: '',
+        },
+        {
+          settings: {},
+          path: '',
+        },
+        {
+          settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
+        },
+        {
+          settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
+        },
+        true,
+        new Set(),
+      );
+
+      const { lastFrame } = renderWithProviders(
+        <AuthDialog onSelect={() => {}} settings={settings} />,
+      );
+
+      expect(lastFrame()).toContain(
+        'Custom LLM configuration detected (CUSTOM_LLM_*)',
+      );
+    });
   });
 
   describe('GEMINI_API_KEY environment variable', () => {
@@ -218,7 +343,7 @@ describe('AuthDialog', () => {
       );
 
       // This is a bit brittle, but it's the best way to check which item is selected.
-      expect(lastFrame()).toContain('● 1. Login with Google');
+      expect(lastFrame()).toContain('● 2. Login with Google');
     });
 
     it('should fall back to default if GEMINI_DEFAULT_AUTH_TYPE is not set', () => {
@@ -251,8 +376,8 @@ describe('AuthDialog', () => {
         <AuthDialog onSelect={() => {}} settings={settings} />,
       );
 
-      // Default is LOGIN_WITH_GOOGLE
-      expect(lastFrame()).toContain('● 1. Login with Google');
+      // Default is CUSTOM_LLM (first option)
+      expect(lastFrame()).toContain('● 1. Custom LLM API');
     });
 
     it('should show an error and fall back to default if GEMINI_DEFAULT_AUTH_TYPE is invalid', () => {
@@ -291,8 +416,8 @@ describe('AuthDialog', () => {
         'Invalid value for GEMINI_DEFAULT_AUTH_TYPE: "invalid-auth-type"',
       );
 
-      // Default is LOGIN_WITH_GOOGLE
-      expect(lastFrame()).toContain('● 1. Login with Google');
+      // Default is CUSTOM_LLM (first option)
+      expect(lastFrame()).toContain('● 1. Custom LLM API');
     });
   });
 
@@ -333,9 +458,7 @@ describe('AuthDialog', () => {
     await wait();
 
     // Should show error message instead of calling onSelect
-    expect(lastFrame()).toContain(
-      'You must select an auth method to proceed. Press Ctrl+C twice to exit.',
-    );
+    expect(lastFrame()).toContain('请选择一个认证方式。按 Ctrl+C 两次退出。');
     expect(onSelect).not.toHaveBeenCalled();
     unmount();
   });
@@ -417,6 +540,10 @@ describe('AuthDialog', () => {
     const { stdin, unmount } = renderWithProviders(
       <AuthDialog onSelect={onSelect} settings={settings} />,
     );
+    await wait();
+
+    // Simulate highlighting an option first (this sets hasUserSelected to true)
+    stdin.write('\u001b[B'); // Down arrow key
     await wait();
 
     // Simulate pressing escape key

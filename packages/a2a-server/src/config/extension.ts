@@ -12,7 +12,7 @@ import * as path from 'node:path';
 import * as os from 'node:os';
 import { logger } from '../utils/logger.js';
 
-export const EXTENSIONS_DIRECTORY_NAME = path.join('.gemini', 'extensions');
+export const EXTENSIONS_DIRECTORY_NAME = path.join('.tie', 'extensions');
 export const EXTENSIONS_CONFIG_FILENAME = 'gemini-extension.json';
 
 export interface Extension {
@@ -110,7 +110,7 @@ function loadExtension(extensionDir: string): Extension | null {
 
 function getContextFileNames(config: ExtensionConfig): string[] {
   if (!config.contextFileName) {
-    return ['GEMINI.md'];
+    return ['TIE.md'];
   } else if (!Array.isArray(config.contextFileName)) {
     return [config.contextFileName];
   }
