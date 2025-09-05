@@ -347,28 +347,32 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
   } = useAuthCommand(settings, setAuthError, config);
 
   useEffect(() => {
-    if (
-      settings.merged.security?.auth?.enforcedType &&
-      settings.merged.security?.auth.selectedType &&
-      settings.merged.security?.auth.enforcedType !==
-        settings.merged.security?.auth.selectedType
-    ) {
-      setAuthError(
-        `Authentication is enforced to be ${settings.merged.security?.auth.enforcedType}, but you are currently using ${settings.merged.security?.auth.selectedType}.`,
-      );
-      openAuthDialog();
-    } else if (
-      settings.merged.security?.auth?.selectedType &&
-      !settings.merged.security?.auth?.useExternal
-    ) {
-      const error = validateAuthMethod(
-        settings.merged.security.auth.selectedType,
-      );
-      if (error) {
-        setAuthError(error);
+    const checkAuth = async () => {
+      if (
+        settings.merged.security?.auth?.enforcedType &&
+        settings.merged.security?.auth.selectedType &&
+        settings.merged.security?.auth.enforcedType !==
+          settings.merged.security?.auth.selectedType
+      ) {
+        setAuthError(
+          `Authentication is enforced to be ${settings.merged.security?.auth.enforcedType}, but you are currently using ${settings.merged.security?.auth.selectedType}.`,
+        );
         openAuthDialog();
+      } else if (
+        settings.merged.security?.auth?.selectedType &&
+        !settings.merged.security?.auth?.useExternal
+      ) {
+        const error = await validateAuthMethod(
+          settings.merged.security.auth.selectedType,
+        );
+        if (error) {
+          setAuthError(error);
+          openAuthDialog();
+        }
       }
-    }
+    };
+
+    checkAuth();
   }, [
     settings.merged.security?.auth?.selectedType,
     settings.merged.security?.auth?.enforcedType,

@@ -378,6 +378,20 @@ export async function loadHierarchicalGeminiMemory(
   );
 }
 
+function getModelFromAuthType(): string | undefined {
+  // 检查自定义LLM配置
+  if (
+    process.env['CUSTOM_LLM_API_KEY'] &&
+    process.env['CUSTOM_LLM_ENDPOINT'] &&
+    process.env['CUSTOM_LLM_MODEL_NAME']
+  ) {
+    return process.env['CUSTOM_LLM_MODEL_NAME'];
+  }
+
+  // 其他认证类型使用默认模型
+  return undefined;
+}
+
 export async function loadCliConfig(
   settings: Settings,
   extensions: Extension[],
@@ -604,7 +618,11 @@ export async function loadCliConfig(
     cwd,
     fileDiscoveryService: fileService,
     bugCommand: settings.advanced?.bugCommand,
-    model: argv.model || settings.model?.name || DEFAULT_GEMINI_MODEL,
+    model:
+      argv.model ||
+      settings.model?.name ||
+      getModelFromAuthType() ||
+      DEFAULT_GEMINI_MODEL,
     extensionContextFilePaths,
     maxSessionTurns: settings.model?.maxSessionTurns ?? -1,
     experimentalZedIntegration: argv.experimentalAcp || false,

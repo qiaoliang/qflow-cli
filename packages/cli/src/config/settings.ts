@@ -14,6 +14,7 @@ import {
   GEMINI_CONFIG_DIR as GEMINI_DIR,
   getErrorMessage,
   Storage,
+  AuthType,
 } from '@google/gemini-cli-core';
 import stripJsonComments from 'strip-json-comments';
 import { DefaultLight } from '../ui/themes/default-light.js';
@@ -656,6 +657,21 @@ export function loadSettings(
   systemSettings = resolveEnvVarsInObject(systemSettings);
   userSettings = resolveEnvVarsInObject(userSettings);
   workspaceSettings = resolveEnvVarsInObject(workspaceSettings);
+
+  // 检查自定义LLM配置，如果存在则覆盖用户设置中的认证类型
+  if (
+    process.env['CUSTOM_LLM_API_KEY'] &&
+    process.env['CUSTOM_LLM_ENDPOINT'] &&
+    process.env['CUSTOM_LLM_MODEL_NAME']
+  ) {
+    if (!userSettings.security) {
+      userSettings.security = {};
+    }
+    if (!userSettings.security.auth) {
+      userSettings.security.auth = {};
+    }
+    userSettings.security.auth.selectedType = AuthType.CUSTOM_LLM;
+  }
 
   // Create LoadedSettings first
 

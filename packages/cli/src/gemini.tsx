@@ -310,7 +310,7 @@ export async function main() {
       ) {
         // Validate authentication here because the sandbox will interfere with the Oauth2 web redirect.
         try {
-          const err = validateAuthMethod(
+          const err = await validateAuthMethod(
             settings.merged.security.auth.selectedType,
           );
           if (err) {

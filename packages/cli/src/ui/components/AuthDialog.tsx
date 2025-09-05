@@ -54,6 +54,16 @@ export function AuthDialog({
       );
     }
 
+    // 检查自定义LLM配置
+    if (
+      process.env['CUSTOM_LLM_API_KEY'] &&
+      process.env['CUSTOM_LLM_ENDPOINT'] &&
+      process.env['CUSTOM_LLM_MODEL_NAME'] &&
+      (!defaultAuthType || defaultAuthType === AuthType.CUSTOM_LLM)
+    ) {
+      return 'Custom LLM configuration detected (CUSTOM_LLM_*). Select "Custom LLM API" option to use it.';
+    }
+
     if (
       process.env['GEMINI_API_KEY'] &&
       (!defaultAuthType || defaultAuthType === AuthType.USE_GEMINI)
@@ -63,6 +73,10 @@ export function AuthDialog({
     return null;
   });
   let items = [
+    {
+      label: 'Custom LLM API',
+      value: AuthType.CUSTOM_LLM,
+    },
     {
       label: 'Login with Google',
       value: AuthType.LOGIN_WITH_GOOGLE,
@@ -100,6 +114,15 @@ export function AuthDialog({
       return item.value === defaultAuthType;
     }
 
+    // 优先检查自定义LLM配置
+    if (
+      process.env['CUSTOM_LLM_API_KEY'] &&
+      process.env['CUSTOM_LLM_ENDPOINT'] &&
+      process.env['CUSTOM_LLM_MODEL_NAME']
+    ) {
+      return item.value === AuthType.CUSTOM_LLM;
+    }
+
     if (process.env['GEMINI_API_KEY']) {
       return item.value === AuthType.USE_GEMINI;
     }
@@ -110,8 +133,8 @@ export function AuthDialog({
     initialAuthIndex = 0;
   }
 
-  const handleAuthSelect = (authMethod: AuthType) => {
-    const error = validateAuthMethod(authMethod);
+  const handleAuthSelect = async (authMethod: AuthType) => {
+    const error = await validateAuthMethod(authMethod);
     if (error) {
       setErrorMessage(error);
     } else {
