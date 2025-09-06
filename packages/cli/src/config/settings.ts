@@ -658,12 +658,22 @@ export function loadSettings(
   userSettings = resolveEnvVarsInObject(userSettings);
   workspaceSettings = resolveEnvVarsInObject(workspaceSettings);
 
-  // 检查自定义LLM配置，如果存在则覆盖用户设置中的认证类型
-  if (
-    process.env['TIE_API_KEY'] &&
-    process.env['TIE_ENDPOINT'] &&
-    process.env['TIE_MODEL_NAME']
-  ) {
+  // 检查自定义LLM配置的完整性
+  const hasTieApiKey = !!process.env['TIE_API_KEY'];
+  const hasTieEndpoint = !!process.env['TIE_ENDPOINT'];
+  const hasTieModelName = !!process.env['TIE_MODEL_NAME'];
+  
+  // 如果任何一个TIE环境变量存在但不完整，则强制显示认证对话框
+  const hasPartialTieConfig = hasTieApiKey || hasTieEndpoint || hasTieModelName;
+  const hasCompleteTieConfig = hasTieApiKey && hasTieEndpoint && hasTieModelName;
+  
+  if (hasPartialTieConfig && !hasCompleteTieConfig) {
+    // 部分环境变量存在但不完整，清除认证类型以强制显示认证对话框
+    if (userSettings.security?.auth) {
+      userSettings.security.auth.selectedType = undefined;
+    }
+  } else if (hasCompleteTieConfig) {
+    // 所有必需的环境变量都存在，设置认证类型
     if (!userSettings.security) {
       userSettings.security = {};
     }
