@@ -94,9 +94,11 @@ describe('AuthDialog', () => {
         },
         {
           settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
         },
         {
           settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
         },
         true,
         new Set(),
@@ -132,9 +134,11 @@ describe('AuthDialog', () => {
         },
         {
           settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
         },
         {
           settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
         },
         true,
         new Set(),
@@ -170,9 +174,11 @@ describe('AuthDialog', () => {
         },
         {
           settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
         },
         {
           settings: { ui: { customThemes: {} }, mcpServers: {} },
+          path: '',
         },
         true,
         new Set(),

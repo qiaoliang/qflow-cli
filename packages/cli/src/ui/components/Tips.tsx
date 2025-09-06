@@ -17,6 +17,17 @@ export const Tips: React.FC<TipsProps> = ({ config }) => {
   const geminiMdFileCount = config.getGeminiMdFileCount();
   return (
     <Box flexDirection="column">
+      <Text color={Colors.Foreground}>
+        This{' '}
+        <Text bold color={Colors.AccentYellow}>
+          fork
+        </Text>{' '}
+        of Gemini CLI has{' '}
+        <Text bold color={Colors.AccentYellow}>
+          no requirements of Google
+        </Text>{' '}
+        Account.
+      </Text>
       <Text color={Colors.Foreground}>Tips for getting started:</Text>
       <Text color={Colors.Foreground}>
         1. Ask questions, edit files, or run commands.
