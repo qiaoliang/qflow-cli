@@ -660,9 +660,9 @@ export function loadSettings(
 
   // 检查自定义LLM配置，如果存在则覆盖用户设置中的认证类型
   if (
-    process.env['CUSTOM_LLM_API_KEY'] &&
-    process.env['CUSTOM_LLM_ENDPOINT'] &&
-    process.env['CUSTOM_LLM_MODEL_NAME']
+    process.env['TIE_API_KEY'] &&
+    process.env['TIE_ENDPOINT'] &&
+    process.env['TIE_MODEL_NAME']
   ) {
     if (!userSettings.security) {
       userSettings.security = {};

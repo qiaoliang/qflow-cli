@@ -17,9 +17,9 @@ describe('customLlmAuth', () => {
   beforeEach(() => {
     // 清理环境变量
     process.env = { ...originalEnv };
-    delete process.env['CUSTOM_LLM_API_KEY'];
-    delete process.env['CUSTOM_LLM_ENDPOINT'];
-    delete process.env['CUSTOM_LLM_MODEL_NAME'];
+    delete process.env['TIE_API_KEY'];
+    delete process.env['TIE_ENDPOINT'];
+    delete process.env['TIE_MODEL_NAME'];
     delete process.env['CUSTOM_LLM_TEMPERATURE'];
     delete process.env['CUSTOM_LLM_MAX_TOKENS'];
     delete process.env['CUSTOM_LLM_TOP_P'];
@@ -38,24 +38,24 @@ describe('customLlmAuth', () => {
     });
 
     it('应该返回null当只有API_KEY时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
+      process.env['TIE_API_KEY'] = 'test-key';
       expect(loadCustomLlmConfig()).toBeNull();
     });
 
     it('应该返回null当只有ENDPOINT时', () => {
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
       expect(loadCustomLlmConfig()).toBeNull();
     });
 
     it('应该返回null当只有MODEL_NAME时', () => {
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       expect(loadCustomLlmConfig()).toBeNull();
     });
 
     it('应该返回完整配置当所有必需字段都存在时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
 
       const config = loadCustomLlmConfig();
       expect(config).toEqual({
@@ -72,9 +72,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该使用自定义值当环境变量设置时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_TEMPERATURE'] = '0.5';
       process.env['CUSTOM_LLM_MAX_TOKENS'] = '1024';
       process.env['CUSTOM_LLM_TOP_P'] = '0.8';
@@ -97,9 +97,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该抛出错误当temperature超出范围时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_TEMPERATURE'] = '3.0';
 
       expect(() => loadCustomLlmConfig()).toThrow(
@@ -108,9 +108,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该抛出错误当maxTokens超出范围时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_MAX_TOKENS'] = '200000';
 
       expect(() => loadCustomLlmConfig()).toThrow(
@@ -119,9 +119,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该抛出错误当topP超出范围时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_TOP_P'] = '1.5';
 
       expect(() => loadCustomLlmConfig()).toThrow(
@@ -130,9 +130,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该抛出错误当timeout太小时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_TIMEOUT'] = '500';
 
       expect(() => loadCustomLlmConfig()).toThrow(
@@ -141,9 +141,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该抛出错误当retries超出范围时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_RETRIES'] = '15';
 
       expect(() => loadCustomLlmConfig()).toThrow(
@@ -158,17 +158,17 @@ describe('customLlmAuth', () => {
     });
 
     it('应该返回false当配置有错误时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'invalid-url';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'invalid-url';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
 
       expect(shouldUseCustomLlm()).toBe(false);
     });
 
     it('应该返回true当配置完整且有效时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
 
       expect(shouldUseCustomLlm()).toBe(true);
     });
@@ -178,27 +178,25 @@ describe('customLlmAuth', () => {
     it('应该返回无效当所有必需字段都缺失时', () => {
       const result = validateCustomLlmConfig();
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('CUSTOM_LLM_API_KEY is required');
-      expect(result.errors).toContain('CUSTOM_LLM_ENDPOINT is required');
-      expect(result.errors).toContain('CUSTOM_LLM_MODEL_NAME is required');
+      expect(result.errors).toContain('TIE_API_KEY is required');
+      expect(result.errors).toContain('TIE_ENDPOINT is required');
+      expect(result.errors).toContain('TIE_MODEL_NAME is required');
     });
 
     it('应该返回无效当endpoint不是有效URL时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'invalid-url';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'invalid-url';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
 
       const result = validateCustomLlmConfig();
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        'CUSTOM_LLM_ENDPOINT must be a valid URL',
-      );
+      expect(result.errors).toContain('TIE_ENDPOINT must be a valid URL');
     });
 
     it('应该返回有效当所有必需字段都存在且有效时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
 
       const result = validateCustomLlmConfig();
       expect(result.isValid).toBe(true);
@@ -206,9 +204,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该返回无效当temperature超出范围时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_TEMPERATURE'] = '3.0';
 
       const result = validateCustomLlmConfig();
@@ -219,9 +217,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该返回无效当maxTokens超出范围时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_MAX_TOKENS'] = '200000';
 
       const result = validateCustomLlmConfig();
@@ -232,9 +230,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该返回无效当topP超出范围时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_TOP_P'] = '1.5';
 
       const result = validateCustomLlmConfig();
@@ -245,9 +243,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该返回无效当timeout太小时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_TIMEOUT'] = '500';
 
       const result = validateCustomLlmConfig();
@@ -258,9 +256,9 @@ describe('customLlmAuth', () => {
     });
 
     it('应该返回无效当retries超出范围时', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'gpt-3.5-turbo';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
       process.env['CUSTOM_LLM_RETRIES'] = '15';
 
       const result = validateCustomLlmConfig();

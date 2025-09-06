@@ -20,9 +20,9 @@ describe('AuthDialog', () => {
     process.env['GEMINI_API_KEY'] = '';
     process.env['GEMINI_DEFAULT_AUTH_TYPE'] = '';
     // 清理自定义LLM环境变量
-    delete process.env['CUSTOM_LLM_API_KEY'];
-    delete process.env['CUSTOM_LLM_ENDPOINT'];
-    delete process.env['CUSTOM_LLM_MODEL_NAME'];
+    delete process.env['TIE_API_KEY'];
+    delete process.env['TIE_ENDPOINT'];
+    delete process.env['TIE_MODEL_NAME'];
     vi.clearAllMocks();
   });
 
@@ -75,9 +75,9 @@ describe('AuthDialog', () => {
 
   describe('CUSTOM_LLM environment variables', () => {
     it('should detect CUSTOM_LLM environment variables', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'test-model';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'test-model';
 
       const settings: LoadedSettings = new LoadedSettings(
         {
@@ -114,9 +114,9 @@ describe('AuthDialog', () => {
     });
 
     it('should not show the CUSTOM_LLM message if GEMINI_DEFAULT_AUTH_TYPE is set to something else', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'test-model';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'test-model';
       process.env['GEMINI_DEFAULT_AUTH_TYPE'] = AuthType.LOGIN_WITH_GOOGLE;
 
       const settings: LoadedSettings = new LoadedSettings(
@@ -154,9 +154,9 @@ describe('AuthDialog', () => {
     });
 
     it('should show the CUSTOM_LLM message if GEMINI_DEFAULT_AUTH_TYPE is set to custom LLM', () => {
-      process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-      process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-      process.env['CUSTOM_LLM_MODEL_NAME'] = 'test-model';
+      process.env['TIE_API_KEY'] = 'test-key';
+      process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+      process.env['TIE_MODEL_NAME'] = 'test-model';
       process.env['GEMINI_DEFAULT_AUTH_TYPE'] = AuthType.CUSTOM_LLM;
 
       const settings: LoadedSettings = new LoadedSettings(

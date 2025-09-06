@@ -31,7 +31,7 @@ npx https://github.com/google-gemini/tie-cli
 #### Install globally with npm
 
 ```bash
-npm install -g @qiaoliang/tie-cli
+npm install -g @tiecode@tie-cli
 ```
 
 #### Install globally with Homebrew (macOS/Linux)
@@ -54,7 +54,7 @@ See [Releases](./docs/releases.md) for more details.
 New preview releases will be published each week at UTC 2359 on Tuesdays. These releases will not have been fully vetted and may contain regressions or other outstanding issues. Please help us test and install with `preview` tag.
 
 ```bash
-npm install -g @qiaoliang/tie-cli@preview
+npm install -g @tiecode@tie-cli@preview
 ```
 
 ### Stable
@@ -62,7 +62,7 @@ npm install -g @qiaoliang/tie-cli@preview
 - New stable releases will be published each week at UTC 2000 on Tuesdays, this will be the full promotion of last week's `preview` release + any bug fixes and validations. Use `latest` tag.
 
 ```bash
-npm install -g @qiaoliang/tie-cli@latest
+npm install -g @tiecode@tie-cli@latest
 ```
 
 ### Nightly
@@ -70,7 +70,7 @@ npm install -g @qiaoliang/tie-cli@latest
 - New releases will be published each week at UTC 0000 each day, This will be all changes from the main branch as represented at time of release. It should be assumed there are pending validations and issues. Use `nightly` tag.
 
 ```bash
-npm install -g @qiaoliang/tie-cli@nightly
+npm install -g @tiecode@tie-cli@nightly
 ```
 
 ## 📋 Key Features

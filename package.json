@@ -1,5 +1,5 @@
 {
-  "name": "@qiaoliang/tie-cli",
+  "name": "@tiecode/tie-cli",
   "version": "0.3.1",
   "engines": {
     "node": ">=20.0.0"
@@ -8,7 +8,6 @@
   "workspaces": [
     "packages/*"
   ],
-  "private": "true",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/qiaoliang/tie-cli.git"

@@ -13,9 +13,9 @@ import { type LoadedSettings } from './config/settings.js';
 function getAuthTypeFromEnv(): AuthType | undefined {
   // 1. 优先检查自定义LLM配置
   if (
-    process.env['CUSTOM_LLM_API_KEY'] &&
-    process.env['CUSTOM_LLM_ENDPOINT'] &&
-    process.env['CUSTOM_LLM_MODEL_NAME']
+    process.env['TIE_API_KEY'] &&
+    process.env['TIE_ENDPOINT'] &&
+    process.env['TIE_MODEL_NAME']
   ) {
     return AuthType.CUSTOM_LLM;
   }
@@ -60,7 +60,7 @@ export async function validateNonInteractiveAuth(
 
   if (!effectiveAuthType) {
     console.error(
-      `Please set an Auth method in your ${USER_SETTINGS_PATH} or specify one of the following environment variables before running: CUSTOM_LLM_API_KEY+CUSTOM_LLM_ENDPOINT+CUSTOM_LLM_MODEL_NAME, GEMINI_API_KEY, GOOGLE_GENAI_USE_VERTEXAI, GOOGLE_GENAI_USE_GCA`,
+      `Please set an Auth method in your ${USER_SETTINGS_PATH} or specify one of the following environment variables before running: TIE_API_KEY+TIE_ENDPOINT+TIE_MODEL_NAME, GEMINI_API_KEY, GOOGLE_GENAI_USE_VERTEXAI, GOOGLE_GENAI_USE_GCA`,
     );
     process.exit(1);
   }

@@ -381,11 +381,11 @@ export async function loadHierarchicalGeminiMemory(
 function getModelFromAuthType(): string | undefined {
   // 检查自定义LLM配置
   if (
-    process.env['CUSTOM_LLM_API_KEY'] &&
-    process.env['CUSTOM_LLM_ENDPOINT'] &&
-    process.env['CUSTOM_LLM_MODEL_NAME']
+    process.env['TIE_API_KEY'] &&
+    process.env['TIE_ENDPOINT'] &&
+    process.env['TIE_MODEL_NAME']
   ) {
-    return process.env['CUSTOM_LLM_MODEL_NAME'];
+    return process.env['TIE_MODEL_NAME'];
   }
 
   // 其他认证类型使用默认模型

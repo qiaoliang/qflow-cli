@@ -56,9 +56,9 @@ export function AuthDialog({
 
     // 检查自定义LLM配置
     if (
-      process.env['CUSTOM_LLM_API_KEY'] &&
-      process.env['CUSTOM_LLM_ENDPOINT'] &&
-      process.env['CUSTOM_LLM_MODEL_NAME'] &&
+      process.env['TIE_API_KEY'] &&
+      process.env['TIE_ENDPOINT'] &&
+      process.env['TIE_MODEL_NAME'] &&
       (!defaultAuthType || defaultAuthType === AuthType.CUSTOM_LLM)
     ) {
       return 'Custom LLM configuration detected (CUSTOM_LLM_*). Select "Custom LLM API" option to use it.';
@@ -116,9 +116,9 @@ export function AuthDialog({
 
     // 优先检查自定义LLM配置
     if (
-      process.env['CUSTOM_LLM_API_KEY'] &&
-      process.env['CUSTOM_LLM_ENDPOINT'] &&
-      process.env['CUSTOM_LLM_MODEL_NAME']
+      process.env['TIE_API_KEY'] &&
+      process.env['TIE_ENDPOINT'] &&
+      process.env['TIE_MODEL_NAME']
     ) {
       return item.value === AuthType.CUSTOM_LLM;
     }

@@ -76,45 +76,45 @@ describe('validateAuthMethod', () => {
 
   describe('CUSTOM_LLM', () => {
     beforeEach(() => {
-      vi.stubEnv('CUSTOM_LLM_API_KEY', undefined);
-      vi.stubEnv('CUSTOM_LLM_ENDPOINT', undefined);
-      vi.stubEnv('CUSTOM_LLM_MODEL_NAME', undefined);
+      vi.stubEnv('TIE_API_KEY', undefined);
+      vi.stubEnv('TIE_ENDPOINT', undefined);
+      vi.stubEnv('TIE_MODEL_NAME', undefined);
     });
 
     it('should return null if all required custom LLM environment variables are set', async () => {
-      vi.stubEnv('CUSTOM_LLM_API_KEY', 'test-api-key');
-      vi.stubEnv('CUSTOM_LLM_ENDPOINT', 'https://api.example.com');
-      vi.stubEnv('CUSTOM_LLM_MODEL_NAME', 'test-model');
+      vi.stubEnv('TIE_API_KEY', 'test-api-key');
+      vi.stubEnv('TIE_ENDPOINT', 'https://api.example.com');
+      vi.stubEnv('TIE_MODEL_NAME', 'test-model');
       expect(await validateAuthMethod(AuthType.CUSTOM_LLM)).toBeNull();
     });
 
-    it('should return error message if CUSTOM_LLM_API_KEY is missing', async () => {
-      vi.stubEnv('CUSTOM_LLM_ENDPOINT', 'https://api.example.com');
-      vi.stubEnv('CUSTOM_LLM_MODEL_NAME', 'test-model');
+    it('should return error message if TIE_API_KEY is missing', async () => {
+      vi.stubEnv('TIE_ENDPOINT', 'https://api.example.com');
+      vi.stubEnv('TIE_MODEL_NAME', 'test-model');
       const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
-      expect(result).toContain('CUSTOM_LLM_API_KEY is required');
+      expect(result).toContain('TIE_API_KEY is required');
     });
 
-    it('should return error message if CUSTOM_LLM_ENDPOINT is missing', async () => {
-      vi.stubEnv('CUSTOM_LLM_API_KEY', 'test-api-key');
-      vi.stubEnv('CUSTOM_LLM_MODEL_NAME', 'test-model');
+    it('should return error message if TIE_ENDPOINT is missing', async () => {
+      vi.stubEnv('TIE_API_KEY', 'test-api-key');
+      vi.stubEnv('TIE_MODEL_NAME', 'test-model');
       const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
-      expect(result).toContain('CUSTOM_LLM_ENDPOINT is required');
+      expect(result).toContain('TIE_ENDPOINT is required');
     });
 
-    it('should return error message if CUSTOM_LLM_MODEL_NAME is missing', async () => {
-      vi.stubEnv('CUSTOM_LLM_API_KEY', 'test-api-key');
-      vi.stubEnv('CUSTOM_LLM_ENDPOINT', 'https://api.example.com');
+    it('should return error message if TIE_MODEL_NAME is missing', async () => {
+      vi.stubEnv('TIE_API_KEY', 'test-api-key');
+      vi.stubEnv('TIE_ENDPOINT', 'https://api.example.com');
       const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
-      expect(result).toContain('CUSTOM_LLM_MODEL_NAME is required');
+      expect(result).toContain('TIE_MODEL_NAME is required');
     });
 
-    it('should return error message if CUSTOM_LLM_ENDPOINT is invalid URL', async () => {
-      vi.stubEnv('CUSTOM_LLM_API_KEY', 'test-api-key');
-      vi.stubEnv('CUSTOM_LLM_ENDPOINT', 'invalid-url');
-      vi.stubEnv('CUSTOM_LLM_MODEL_NAME', 'test-model');
+    it('should return error message if TIE_ENDPOINT is invalid URL', async () => {
+      vi.stubEnv('TIE_API_KEY', 'test-api-key');
+      vi.stubEnv('TIE_ENDPOINT', 'invalid-url');
+      vi.stubEnv('TIE_MODEL_NAME', 'test-model');
       const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
-      expect(result).toContain('CUSTOM_LLM_ENDPOINT must be a valid URL');
+      expect(result).toContain('TIE_ENDPOINT must be a valid URL');
     });
   });
 

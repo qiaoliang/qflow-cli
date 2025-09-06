@@ -27,9 +27,9 @@ describe('validateNonInterActiveAuth', () => {
     delete process.env['GOOGLE_GENAI_USE_VERTEXAI'];
     delete process.env['GOOGLE_GENAI_USE_GCA'];
     // 清理自定义LLM环境变量
-    delete process.env['CUSTOM_LLM_API_KEY'];
-    delete process.env['CUSTOM_LLM_ENDPOINT'];
-    delete process.env['CUSTOM_LLM_MODEL_NAME'];
+    delete process.env['TIE_API_KEY'];
+    delete process.env['TIE_ENDPOINT'];
+    delete process.env['TIE_MODEL_NAME'];
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     processExitSpy = vi.spyOn(process, 'exit').mockImplementation((code) => {
       throw new Error(`process.exit(${code}) called`);
@@ -97,9 +97,9 @@ describe('validateNonInterActiveAuth', () => {
   });
 
   it('uses CUSTOM_LLM if all custom LLM environment variables are set', async () => {
-    process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-    process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-    process.env['CUSTOM_LLM_MODEL_NAME'] = 'test-model';
+    process.env['TIE_API_KEY'] = 'test-key';
+    process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+    process.env['TIE_MODEL_NAME'] = 'test-model';
     const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
@@ -172,9 +172,9 @@ describe('validateNonInterActiveAuth', () => {
   });
 
   it('uses CUSTOM_LLM if all custom LLM env vars are set, even with other env vars', async () => {
-    process.env['CUSTOM_LLM_API_KEY'] = 'test-key';
-    process.env['CUSTOM_LLM_ENDPOINT'] = 'https://api.example.com';
-    process.env['CUSTOM_LLM_MODEL_NAME'] = 'test-model';
+    process.env['TIE_API_KEY'] = 'test-key';
+    process.env['TIE_ENDPOINT'] = 'https://api.example.com';
+    process.env['TIE_MODEL_NAME'] = 'test-model';
     process.env['GOOGLE_GENAI_USE_GCA'] = 'true';
     process.env['GEMINI_API_KEY'] = 'fake-key';
     process.env['GOOGLE_GENAI_USE_VERTEXAI'] = 'true';

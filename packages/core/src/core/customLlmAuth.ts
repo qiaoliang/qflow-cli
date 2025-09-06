@@ -45,9 +45,9 @@ const DEFAULT_CUSTOM_LLM_CONFIG: Partial<CustomLlmConfig> = {
  * @returns 自定义LLM配置对象，如果配置不完整则返回null
  */
 export function loadCustomLlmConfig(): CustomLlmConfig | null {
-  const apiKey = process.env['CUSTOM_LLM_API_KEY'];
-  const endpoint = process.env['CUSTOM_LLM_ENDPOINT'];
-  const modelName = process.env['CUSTOM_LLM_MODEL_NAME'];
+  const apiKey = process.env['TIE_API_KEY'];
+  const endpoint = process.env['TIE_ENDPOINT'];
+  const modelName = process.env['TIE_MODEL_NAME'];
 
   // 检查必需字段
   if (!apiKey || !endpoint || !modelName) {
@@ -58,7 +58,7 @@ export function loadCustomLlmConfig(): CustomLlmConfig | null {
   try {
     new URL(endpoint);
   } catch {
-    throw new Error('CUSTOM_LLM_ENDPOINT must be a valid URL');
+    throw new Error('TIE_ENDPOINT must be a valid URL');
   }
 
   // 解析可选的数值配置
@@ -144,26 +144,26 @@ export function validateCustomLlmConfig(): {
 } {
   const errors: string[] = [];
 
-  const apiKey = process.env['CUSTOM_LLM_API_KEY'];
-  const endpoint = process.env['CUSTOM_LLM_ENDPOINT'];
-  const modelName = process.env['CUSTOM_LLM_MODEL_NAME'];
+  const apiKey = process.env['TIE_API_KEY'];
+  const endpoint = process.env['TIE_ENDPOINT'];
+  const modelName = process.env['TIE_MODEL_NAME'];
 
   if (!apiKey) {
-    errors.push('CUSTOM_LLM_API_KEY is required');
+    errors.push('TIE_API_KEY is required');
   }
 
   if (!endpoint) {
-    errors.push('CUSTOM_LLM_ENDPOINT is required');
+    errors.push('TIE_ENDPOINT is required');
   } else {
     try {
       new URL(endpoint);
     } catch {
-      errors.push('CUSTOM_LLM_ENDPOINT must be a valid URL');
+      errors.push('TIE_ENDPOINT must be a valid URL');
     }
   }
 
   if (!modelName) {
-    errors.push('CUSTOM_LLM_MODEL_NAME is required');
+    errors.push('TIE_MODEL_NAME is required');
   }
 
   // 验证可选参数
