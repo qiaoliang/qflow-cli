@@ -64,7 +64,7 @@ export const useAuthCommand = (
           console.log(
             `
 ----------------------------------------------------------------
-Logging in with Google... Please restart Gemini CLI to continue.
+Logging in with Google... Please restart Tie CLI to continue.
 ----------------------------------------------------------------
             `,
           );
