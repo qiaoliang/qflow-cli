@@ -17,9 +17,9 @@ describe('FileSearch', () => {
     vi.restoreAllMocks();
   });
 
-  it('should use .geminiignore rules', async () => {
+  it('should use .tieignore rules', async () => {
     tmpDir = await createTmpDir({
-      '.geminiignore': 'dist/',
+      '.tieignore': 'dist/',
       dist: ['ignored.js'],
       src: ['not-ignored.js'],
     });
@@ -38,13 +38,13 @@ describe('FileSearch', () => {
     await fileSearch.initialize();
     const results = await fileSearch.search('');
 
-    expect(results).toEqual(['src/', '.geminiignore', 'src/not-ignored.js']);
+    expect(results).toEqual(['src/', '.tieignore', 'src/not-ignored.js']);
   });
 
-  it('should combine .gitignore and .geminiignore rules', async () => {
+  it('should combine .gitignore and .tieignore rules', async () => {
     tmpDir = await createTmpDir({
       '.gitignore': 'dist/',
-      '.geminiignore': 'build/',
+      '.tieignore': 'build/',
       dist: ['ignored-by-git.js'],
       build: ['ignored-by-gemini.js'],
       src: ['not-ignored.js'],
@@ -66,7 +66,7 @@ describe('FileSearch', () => {
 
     expect(results).toEqual([
       'src/',
-      '.geminiignore',
+      '.tieignore',
       '.gitignore',
       'src/not-ignored.js',
     ]);
