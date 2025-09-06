@@ -28,44 +28,44 @@ describe('validateAuthMethod', () => {
     vi.unstubAllEnvs();
   });
 
-  it('should return null for LOGIN_WITH_GOOGLE', () => {
-    expect(validateAuthMethod(AuthType.LOGIN_WITH_GOOGLE)).toBeNull();
+  it('should return null for LOGIN_WITH_GOOGLE', async () => {
+    expect(await validateAuthMethod(AuthType.LOGIN_WITH_GOOGLE)).toBeNull();
   });
 
-  it('should return null for CLOUD_SHELL', () => {
-    expect(validateAuthMethod(AuthType.CLOUD_SHELL)).toBeNull();
+  it('should return null for CLOUD_SHELL', async () => {
+    expect(await validateAuthMethod(AuthType.CLOUD_SHELL)).toBeNull();
   });
 
   describe('USE_GEMINI', () => {
-    it('should return null if GEMINI_API_KEY is set', () => {
+    it('should return null if GEMINI_API_KEY is set', async () => {
       vi.stubEnv('GEMINI_API_KEY', 'test-key');
-      expect(validateAuthMethod(AuthType.USE_GEMINI)).toBeNull();
+      expect(await validateAuthMethod(AuthType.USE_GEMINI)).toBeNull();
     });
 
-    it('should return an error message if GEMINI_API_KEY is not set', () => {
+    it('should return an error message if GEMINI_API_KEY is not set', async () => {
       vi.stubEnv('GEMINI_API_KEY', undefined);
-      expect(validateAuthMethod(AuthType.USE_GEMINI)).toBe(
+      expect(await validateAuthMethod(AuthType.USE_GEMINI)).toBe(
         'GEMINI_API_KEY environment variable not found. Add that to your environment and try again (no reload needed if using .env)!',
       );
     });
   });
 
   describe('USE_VERTEX_AI', () => {
-    it('should return null if GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION are set', () => {
+    it('should return null if GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION are set', async () => {
       vi.stubEnv('GOOGLE_CLOUD_PROJECT', 'test-project');
       vi.stubEnv('GOOGLE_CLOUD_LOCATION', 'test-location');
-      expect(validateAuthMethod(AuthType.USE_VERTEX_AI)).toBeNull();
+      expect(await validateAuthMethod(AuthType.USE_VERTEX_AI)).toBeNull();
     });
 
-    it('should return null if GOOGLE_API_KEY is set', () => {
+    it('should return null if GOOGLE_API_KEY is set', async () => {
       vi.stubEnv('GOOGLE_API_KEY', 'test-api-key');
-      expect(validateAuthMethod(AuthType.USE_VERTEX_AI)).toBeNull();
+      expect(await validateAuthMethod(AuthType.USE_VERTEX_AI)).toBeNull();
     });
 
-    it('should return an error message if no required environment variables are set', () => {
+    it('should return an error message if no required environment variables are set', async () => {
       vi.stubEnv('GOOGLE_CLOUD_PROJECT', undefined);
       vi.stubEnv('GOOGLE_CLOUD_LOCATION', undefined);
-      expect(validateAuthMethod(AuthType.USE_VERTEX_AI)).toBe(
+      expect(await validateAuthMethod(AuthType.USE_VERTEX_AI)).toBe(
         'When using Vertex AI, you must specify either:\n' +
           '• GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION environment variables.\n' +
           '• GOOGLE_API_KEY environment variable (if using express mode).\n' +
@@ -74,8 +74,52 @@ describe('validateAuthMethod', () => {
     });
   });
 
-  it('should return an error message for an invalid auth method', () => {
-    expect(validateAuthMethod('invalid-method')).toBe(
+  describe('CUSTOM_LLM', () => {
+    beforeEach(() => {
+      vi.stubEnv('CUSTOM_LLM_API_KEY', undefined);
+      vi.stubEnv('CUSTOM_LLM_ENDPOINT', undefined);
+      vi.stubEnv('CUSTOM_LLM_MODEL_NAME', undefined);
+    });
+
+    it('should return null if all required custom LLM environment variables are set', async () => {
+      vi.stubEnv('CUSTOM_LLM_API_KEY', 'test-api-key');
+      vi.stubEnv('CUSTOM_LLM_ENDPOINT', 'https://api.example.com');
+      vi.stubEnv('CUSTOM_LLM_MODEL_NAME', 'test-model');
+      expect(await validateAuthMethod(AuthType.CUSTOM_LLM)).toBeNull();
+    });
+
+    it('should return error message if CUSTOM_LLM_API_KEY is missing', async () => {
+      vi.stubEnv('CUSTOM_LLM_ENDPOINT', 'https://api.example.com');
+      vi.stubEnv('CUSTOM_LLM_MODEL_NAME', 'test-model');
+      const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
+      expect(result).toContain('CUSTOM_LLM_API_KEY is required');
+    });
+
+    it('should return error message if CUSTOM_LLM_ENDPOINT is missing', async () => {
+      vi.stubEnv('CUSTOM_LLM_API_KEY', 'test-api-key');
+      vi.stubEnv('CUSTOM_LLM_MODEL_NAME', 'test-model');
+      const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
+      expect(result).toContain('CUSTOM_LLM_ENDPOINT is required');
+    });
+
+    it('should return error message if CUSTOM_LLM_MODEL_NAME is missing', async () => {
+      vi.stubEnv('CUSTOM_LLM_API_KEY', 'test-api-key');
+      vi.stubEnv('CUSTOM_LLM_ENDPOINT', 'https://api.example.com');
+      const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
+      expect(result).toContain('CUSTOM_LLM_MODEL_NAME is required');
+    });
+
+    it('should return error message if CUSTOM_LLM_ENDPOINT is invalid URL', async () => {
+      vi.stubEnv('CUSTOM_LLM_API_KEY', 'test-api-key');
+      vi.stubEnv('CUSTOM_LLM_ENDPOINT', 'invalid-url');
+      vi.stubEnv('CUSTOM_LLM_MODEL_NAME', 'test-model');
+      const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
+      expect(result).toContain('CUSTOM_LLM_ENDPOINT must be a valid URL');
+    });
+  });
+
+  it('should return an error message for an invalid auth method', async () => {
+    expect(await validateAuthMethod('invalid-method')).toBe(
       'Invalid auth method selected.',
     );
   });

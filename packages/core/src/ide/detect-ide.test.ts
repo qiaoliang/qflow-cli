@@ -13,6 +13,17 @@ describe('detectIde', () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    // 清理可能影响 IDE 检测的环境变量
+    delete process.env['CURSOR_TRACE_ID'];
+    delete process.env['CURSOR_AGENT'];
+    delete process.env['MONOSPACE_ENV'];
+    delete process.env['__COG_BASHRC_SOURCED'];
+    delete process.env['CLOUD_SHELL'];
+    delete process.env['EDITOR_IN_CLOUD_SHELL'];
+    delete process.env['CODESPACES'];
+    delete process.env['REPLIT_USER'];
+    delete process.env['TERM_PRODUCT'];
+    delete process.env['TERM_PROGRAM'];
   });
 
   it('should return undefined if TERM_PROGRAM is not vscode', () => {
