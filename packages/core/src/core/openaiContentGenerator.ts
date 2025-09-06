@@ -174,7 +174,16 @@ export class OpenAIContentGenerator implements ContentGenerator {
                 const parsed: OpenAIStreamResponse = JSON.parse(data);
                 const geminiResponse =
                   this.convertFromOpenAIStreamResponse(parsed);
-                yield geminiResponse;
+
+                // 只有当响应有有效内容时才yield
+                if (
+                  geminiResponse.candidates &&
+                  geminiResponse.candidates.length > 0 &&
+                  geminiResponse.candidates[0]?.content?.parts &&
+                  geminiResponse.candidates[0].content.parts.length > 0
+                ) {
+                  yield geminiResponse;
+                }
               } catch (parseError) {
                 // 忽略解析错误，继续处理下一行
                 console.warn('解析流式响应失败:', parseError);
@@ -332,15 +341,33 @@ export class OpenAIContentGenerator implements ContentGenerator {
     }
 
     const text = choice.delta.content || '';
+
+    // 如果没有内容且没有finish_reason，跳过这个chunk
+    if (!text && !choice.finish_reason) {
+      return {
+        candidates: [],
+        text: '',
+        data: '',
+        functionCalls: [],
+        executableCode: '',
+        codeExecutionResult: '',
+        usageMetadata: {
+          promptTokenCount: 0,
+          candidatesTokenCount: 0,
+          totalTokenCount: 0,
+        },
+      };
+    }
+
     return {
       candidates: [
         {
           content: {
             role: 'model',
-            parts: choice.delta.content
+            parts: text
               ? [
                   {
-                    text: choice.delta.content,
+                    text,
                   },
                 ]
               : [],
