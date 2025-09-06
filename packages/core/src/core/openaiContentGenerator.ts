@@ -370,12 +370,21 @@ export class OpenAIContentGenerator implements ContentGenerator {
 
     // 添加function call
     if (functionCall) {
+      let args = {};
+      if (functionCall.arguments) {
+        try {
+          args = JSON.parse(functionCall.arguments);
+        } catch (parseError) {
+          console.warn('解析function call参数失败:', parseError);
+          // 如果JSON解析失败，尝试将参数作为字符串处理
+          args = { raw: functionCall.arguments };
+        }
+      }
+
       parts.push({
         functionCall: {
           name: functionCall.name || '',
-          args: functionCall.arguments
-            ? JSON.parse(functionCall.arguments)
-            : {},
+          args,
         },
       });
     }
@@ -417,7 +426,14 @@ export class OpenAIContentGenerator implements ContentGenerator {
             {
               name: functionCall.name || '',
               args: functionCall.arguments
-                ? JSON.parse(functionCall.arguments)
+                ? (() => {
+                    try {
+                      return JSON.parse(functionCall.arguments);
+                    } catch (parseError) {
+                      console.warn('解析functionCalls参数失败:', parseError);
+                      return { raw: functionCall.arguments };
+                    }
+                  })()
                 : {},
             },
           ]
