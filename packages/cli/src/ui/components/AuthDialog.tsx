@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Box, Text } from 'ink';
 import { Colors } from '../colors.js';
 import { RadioButtonSelect } from './shared/RadioButtonSelect.js';
+import { CustomLLMConfigDialog } from './CustomLLMConfigDialog.js';
 import type { LoadedSettings } from '../../config/settings.js';
 import { SettingScope } from '../../config/settings.js';
 import { AuthType } from '@google/gemini-cli-core';
@@ -38,6 +39,8 @@ export function AuthDialog({
   settings,
   initialErrorMessage,
 }: AuthDialogProps): React.JSX.Element {
+  const [showCustomLLMConfig, setShowCustomLLMConfig] = useState(false);
+  const [hasUserSelected, setHasUserSelected] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(() => {
     if (initialErrorMessage) {
       return initialErrorMessage;
@@ -127,19 +130,101 @@ export function AuthDialog({
       return item.value === AuthType.USE_GEMINI;
     }
 
-    return item.value === AuthType.LOGIN_WITH_GOOGLE;
+    // 不默认选择任何认证方式，让用户主动选择
+    return -1;
   });
   if (settings.merged.security?.auth?.enforcedType) {
     initialAuthIndex = 0;
+  } else if (initialAuthIndex === -1) {
+    // 如果没有找到匹配的认证方式，默认选择第一个
+    initialAuthIndex = 0;
   }
 
-  const handleAuthSelect = async (authMethod: AuthType) => {
-    const error = await validateAuthMethod(authMethod);
+  const handleCustomLLMConfigComplete = async (config: {
+    apiKey: string;
+    endpoint: string;
+    modelName: string;
+  }) => {
+    // 设置环境变量
+    process.env['TIE_API_KEY'] = config.apiKey;
+    process.env['TIE_ENDPOINT'] = config.endpoint;
+    process.env['TIE_MODEL_NAME'] = config.modelName;
+
+    // 写入 .tie/.env 文件
+    const { writeCustomLlmConfigToEnvFile } = await import(
+      '@google/gemini-cli-core'
+    );
+    const success = writeCustomLlmConfigToEnvFile(config);
+    if (!success) {
+      setErrorMessage('保存配置到 .tie/.env 文件失败');
+      setShowCustomLLMConfig(false);
+      return;
+    }
+
+    // 验证配置
+    const error = await validateAuthMethod(AuthType.CUSTOM_LLM);
     if (error) {
       setErrorMessage(error);
+      setShowCustomLLMConfig(false);
     } else {
       setErrorMessage(null);
-      onSelect(authMethod, SettingScope.User);
+      setShowCustomLLMConfig(false);
+      onSelect(AuthType.CUSTOM_LLM, SettingScope.User);
+    }
+  };
+
+  const handleCustomLLMConfigSavePartial = async (config: {
+    apiKey: string;
+    endpoint: string;
+    modelName: string;
+  }) => {
+    // 写入 .tie/.env 文件
+    const { writeCustomLlmConfigToEnvFile } = await import(
+      '@google/gemini-cli-core'
+    );
+    const success = writeCustomLlmConfigToEnvFile(config);
+    if (!success) {
+      setErrorMessage('保存配置到 .tie/.env 文件失败');
+    }
+  };
+
+  const handleCustomLLMConfigCancel = () => {
+    setShowCustomLLMConfig(false);
+    setErrorMessage(null);
+  };
+
+  const handleAuthSelect = async (authMethod: AuthType) => {
+    setHasUserSelected(true);
+
+    if (authMethod === AuthType.CUSTOM_LLM) {
+      // 检查是否已经有完整的环境变量配置
+      const hasCompleteConfig =
+        process.env['TIE_API_KEY'] &&
+        process.env['TIE_ENDPOINT'] &&
+        process.env['TIE_MODEL_NAME'];
+
+      if (hasCompleteConfig) {
+        // 如果环境变量已配置，直接使用
+        const error = await validateAuthMethod(authMethod);
+        if (error) {
+          setErrorMessage(error);
+        } else {
+          setErrorMessage(null);
+          onSelect(authMethod, SettingScope.User);
+        }
+      } else {
+        // 如果环境变量未配置，显示配置对话框
+        setShowCustomLLMConfig(true);
+        setErrorMessage(null);
+      }
+    } else {
+      const error = await validateAuthMethod(authMethod);
+      if (error) {
+        setErrorMessage(error);
+      } else {
+        setErrorMessage(null);
+        onSelect(authMethod, SettingScope.User);
+      }
     }
   };
 
@@ -151,11 +236,9 @@ export function AuthDialog({
         if (errorMessage) {
           return;
         }
-        if (settings.merged.security?.auth?.selectedType === undefined) {
-          // Prevent exiting if no auth method is set
-          setErrorMessage(
-            'You must select an auth method to proceed. Press Ctrl+C twice to exit.',
-          );
+        if (!hasUserSelected) {
+          // Prevent exiting if user hasn't selected an auth method
+          setErrorMessage('请选择一个认证方式。按 Ctrl+C 两次退出。');
           return;
         }
         onSelect(undefined, SettingScope.User);
@@ -163,6 +246,21 @@ export function AuthDialog({
     },
     { isActive: true },
   );
+
+  if (showCustomLLMConfig) {
+    return (
+      <CustomLLMConfigDialog
+        onComplete={handleCustomLLMConfigComplete}
+        onCancel={handleCustomLLMConfigCancel}
+        onSavePartial={handleCustomLLMConfigSavePartial}
+        initialConfig={{
+          apiKey: process.env['TIE_API_KEY'] || '',
+          endpoint: process.env['TIE_ENDPOINT'] || '',
+          modelName: process.env['TIE_MODEL_NAME'] || '',
+        }}
+      />
+    );
+  }
 
   return (
     <Box
@@ -181,6 +279,7 @@ export function AuthDialog({
           items={items}
           initialIndex={initialAuthIndex}
           onSelect={handleAuthSelect}
+          onHighlight={() => setHasUserSelected(true)}
         />
       </Box>
       {errorMessage && (

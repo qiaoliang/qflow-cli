@@ -364,10 +364,20 @@ export async function main() {
     }
   }
 
+  // 检查TIE环境变量的完整性
+  const hasTieApiKey = !!process.env['TIE_API_KEY'];
+  const hasTieEndpoint = !!process.env['TIE_ENDPOINT'];
+  const hasTieModelName = !!process.env['TIE_MODEL_NAME'];
+  const hasPartialTieConfig = hasTieApiKey || hasTieEndpoint || hasTieModelName;
+  const hasCompleteTieConfig =
+    hasTieApiKey && hasTieEndpoint && hasTieModelName;
+
+  // 如果TIE环境变量不完整，不要自动进行OAuth认证
   if (
     settings.merged.security?.auth?.selectedType ===
       AuthType.LOGIN_WITH_GOOGLE &&
-    config.isBrowserLaunchSuppressed()
+    config.isBrowserLaunchSuppressed() &&
+    !(hasPartialTieConfig && !hasCompleteTieConfig)
   ) {
     // Do oauth before app renders to make copying the link possible.
     await getOauthClient(settings.merged.security.auth.selectedType, config);

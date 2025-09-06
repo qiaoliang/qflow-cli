@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
+
 /**
  * 自定义LLM配置接口
  */
@@ -213,4 +216,88 @@ export function validateCustomLlmConfig(): {
     isValid: errors.length === 0,
     errors,
   };
+}
+
+/**
+ * 将自定义LLM配置写入 .tie/.env 文件
+ * @param config 自定义LLM配置
+ * @param workspaceDir 工作目录，默认为当前工作目录
+ * @returns 写入是否成功
+ */
+export function writeCustomLlmConfigToEnvFile(
+  config: CustomLlmConfig,
+  workspaceDir: string = process.cwd(),
+): boolean {
+  try {
+    const tieDir = path.join(workspaceDir, '.tie');
+    const envFilePath = path.join(tieDir, '.env');
+
+    // 确保 .tie 目录存在
+    if (!fs.existsSync(tieDir)) {
+      fs.mkdirSync(tieDir, { recursive: true });
+    }
+
+    // 读取现有的 .env 文件内容（如果存在）
+    let existingContent = '';
+    if (fs.existsSync(envFilePath)) {
+      existingContent = fs.readFileSync(envFilePath, 'utf-8');
+    }
+
+    // 解析现有的环境变量
+    const existingEnvVars: Record<string, string> = {};
+    if (existingContent) {
+      const lines = existingContent.split('\n');
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        if (trimmedLine && !trimmedLine.startsWith('#')) {
+          const equalIndex = trimmedLine.indexOf('=');
+          if (equalIndex > 0) {
+            const key = trimmedLine.substring(0, equalIndex).trim();
+            const value = trimmedLine.substring(equalIndex + 1).trim();
+            existingEnvVars[key] = value;
+          }
+        }
+      }
+    }
+
+    // 更新自定义LLM相关的环境变量
+    existingEnvVars['TIE_API_KEY'] = config.apiKey;
+    existingEnvVars['TIE_ENDPOINT'] = config.endpoint;
+    existingEnvVars['TIE_MODEL_NAME'] = config.modelName;
+
+    // 如果有其他可选配置，也写入
+    if (config.temperature !== undefined) {
+      existingEnvVars['CUSTOM_LLM_TEMPERATURE'] = config.temperature.toString();
+    }
+    if (config.maxTokens !== undefined) {
+      existingEnvVars['CUSTOM_LLM_MAX_TOKENS'] = config.maxTokens.toString();
+    }
+    if (config.topP !== undefined) {
+      existingEnvVars['CUSTOM_LLM_TOP_P'] = config.topP.toString();
+    }
+    if (config.timeout !== undefined) {
+      existingEnvVars['CUSTOM_LLM_TIMEOUT'] = config.timeout.toString();
+    }
+    if (config.retries !== undefined) {
+      existingEnvVars['CUSTOM_LLM_RETRIES'] = config.retries.toString();
+    }
+    if (config.streamEnabled !== undefined) {
+      existingEnvVars['CUSTOM_LLM_STREAM_ENABLED'] =
+        config.streamEnabled.toString();
+    }
+
+    // 生成新的 .env 文件内容
+    const newContent =
+      Object.entries(existingEnvVars)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('\n') + '\n';
+
+    // 写入文件
+    fs.writeFileSync(envFilePath, newContent, 'utf-8');
+
+    return true;
+  } catch (error) {
+    console.error('Error writing custom LLM config to .env file:', error);
+    return false;
+  }
 }
