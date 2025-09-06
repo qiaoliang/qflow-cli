@@ -662,11 +662,12 @@ export function loadSettings(
   const hasTieApiKey = !!process.env['TIE_API_KEY'];
   const hasTieEndpoint = !!process.env['TIE_ENDPOINT'];
   const hasTieModelName = !!process.env['TIE_MODEL_NAME'];
-  
+
   // 如果任何一个TIE环境变量存在但不完整，则强制显示认证对话框
   const hasPartialTieConfig = hasTieApiKey || hasTieEndpoint || hasTieModelName;
-  const hasCompleteTieConfig = hasTieApiKey && hasTieEndpoint && hasTieModelName;
-  
+  const hasCompleteTieConfig =
+    hasTieApiKey && hasTieEndpoint && hasTieModelName;
+
   if (hasPartialTieConfig && !hasCompleteTieConfig) {
     // 部分环境变量存在但不完整，清除认证类型以强制显示认证对话框
     if (userSettings.security?.auth) {
