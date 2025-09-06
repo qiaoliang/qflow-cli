@@ -7,8 +7,8 @@
 // File for 'gemini mcp list' command
 import type { CommandModule } from 'yargs';
 import { loadSettings } from '../../config/settings.js';
-import type { MCPServerConfig } from '@google/gemini-cli-core';
-import { MCPServerStatus, createTransport } from '@google/gemini-cli-core';
+import type { MCPServerConfig } from '@tiecode/tie-cli-core';
+import { MCPServerStatus, createTransport } from '@tiecode/tie-cli-core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { loadExtensions } from '../../config/extension.js';
 

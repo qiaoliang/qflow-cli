@@ -25,7 +25,7 @@ vi.mock('fs', async (importOriginal) => {
     mkdirSync: vi.fn(),
   };
 });
-vi.mock('@google/gemini-cli-core', () => {
+vi.mock('@tiecode/tie-cli-core', () => {
   class Storage {
     getProjectTempDir(): string {
       return path.join('/test/home/', '.tie', 'tmp', 'mocked_hash');

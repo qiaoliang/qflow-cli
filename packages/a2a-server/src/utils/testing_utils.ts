@@ -9,8 +9,8 @@ import type {
   TaskStatusUpdateEvent,
   SendStreamingMessageSuccessResponse,
 } from '@a2a-js/sdk';
-import { ApprovalMode } from '@google/gemini-cli-core';
-import type { Config } from '@google/gemini-cli-core';
+import { ApprovalMode } from '@tiecode/tie-cli-core';
+import type { Config } from '@tiecode/tie-cli-core';
 import { expect, vi } from 'vitest';
 
 export function createMockConfig(

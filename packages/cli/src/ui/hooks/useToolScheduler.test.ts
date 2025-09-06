@@ -24,18 +24,18 @@ import type {
   Status as ToolCallStatusType,
   AnyDeclarativeTool,
   AnyToolInvocation,
-} from '@google/gemini-cli-core';
+} from '@tiecode/tie-cli-core';
 import {
   ToolConfirmationOutcome,
   ApprovalMode,
   MockTool,
-} from '@google/gemini-cli-core';
+} from '@tiecode/tie-cli-core';
 import type { HistoryItemWithoutId, HistoryItemToolGroup } from '../types.js';
 import { ToolCallStatus } from '../types.js';
 
 // Mocks
-vi.mock('@google/gemini-cli-core', async () => {
-  const actual = await vi.importActual('@google/gemini-cli-core');
+vi.mock('@tiecode/tie-cli-core', async () => {
+  const actual = await vi.importActual('@tiecode/tie-cli-core');
   return {
     ...actual,
     ToolRegistry: vi.fn(),

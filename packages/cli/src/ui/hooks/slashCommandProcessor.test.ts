@@ -8,9 +8,9 @@ const { logSlashCommand } = vi.hoisted(() => ({
   logSlashCommand: vi.fn(),
 }));
 
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+vi.mock('@tiecode/tie-cli-core', async (importOriginal) => {
   const original =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
+    await importOriginal<typeof import('@tiecode/tie-cli-core')>();
 
   return {
     ...original,
@@ -86,7 +86,7 @@ import {
   SlashCommandStatus,
   ToolConfirmationOutcome,
   makeFakeConfig,
-} from '@google/gemini-cli-core';
+} from '@tiecode/tie-cli-core';
 
 function createTestCommand(
   overrides: Partial<SlashCommand>,

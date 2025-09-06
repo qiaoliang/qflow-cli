@@ -16,17 +16,17 @@ import {
 import { renderHook, act } from '@testing-library/react';
 import { useAutoAcceptIndicator } from './useAutoAcceptIndicator.js';
 
-import type { Config as ActualConfigType } from '@google/gemini-cli-core';
-import { Config, ApprovalMode } from '@google/gemini-cli-core';
+import type { Config as ActualConfigType } from '@tiecode/tie-cli-core';
+import { Config, ApprovalMode } from '@tiecode/tie-cli-core';
 import type { Key } from './useKeypress.js';
 import { useKeypress } from './useKeypress.js';
 import { MessageType } from '../types.js';
 
 vi.mock('./useKeypress.js');
 
-vi.mock('@google/gemini-cli-core', async () => {
+vi.mock('@tiecode/tie-cli-core', async () => {
   const actualServerModule = (await vi.importActual(
-    '@google/gemini-cli-core',
+    '@tiecode/tie-cli-core',
   )) as Record<string, unknown>;
   return {
     ...actualServerModule,

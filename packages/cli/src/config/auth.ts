@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { AuthType, validateCustomLlmConfig } from '@google/gemini-cli-core';
+import { AuthType, validateCustomLlmConfig } from '@tiecode/tie-cli-core';
 import { loadEnvironment, loadSettings } from './settings.js';
 
 export async function validateAuthMethod(
