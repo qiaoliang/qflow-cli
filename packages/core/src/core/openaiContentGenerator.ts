@@ -68,6 +68,10 @@ interface OpenAIStreamResponse {
     delta: {
       role?: string;
       content?: string;
+      function_call?: {
+        name?: string;
+        arguments?: string;
+      };
     };
     finish_reason?: string;
   }>;
@@ -179,10 +183,20 @@ export class OpenAIContentGenerator implements ContentGenerator {
                 if (
                   geminiResponse.candidates &&
                   geminiResponse.candidates.length > 0 &&
-                  geminiResponse.candidates[0]?.content?.parts &&
-                  geminiResponse.candidates[0].content.parts.length > 0
+                  geminiResponse.candidates[0]?.content
                 ) {
-                  yield geminiResponse;
+                  const content = geminiResponse.candidates[0].content;
+                  const candidate = geminiResponse.candidates[0];
+
+                  // 有文本内容、functionCall、或者finishReason时才yield
+                  if (
+                    (content.parts && content.parts.length > 0) ||
+                    (geminiResponse.functionCalls &&
+                      geminiResponse.functionCalls.length > 0) ||
+                    candidate.finishReason
+                  ) {
+                    yield geminiResponse;
+                  }
                 }
               } catch (parseError) {
                 // 忽略解析错误，继续处理下一行
@@ -341,9 +355,33 @@ export class OpenAIContentGenerator implements ContentGenerator {
     }
 
     const text = choice.delta.content || '';
+    const functionCall = choice.delta.function_call;
+
+    // 构建parts数组
+    const parts: Array<{
+      text?: string;
+      functionCall?: { name: string; args: Record<string, unknown> };
+    }> = [];
+
+    // 添加文本内容
+    if (text) {
+      parts.push({ text });
+    }
+
+    // 添加function call
+    if (functionCall) {
+      parts.push({
+        functionCall: {
+          name: functionCall.name || '',
+          args: functionCall.arguments
+            ? JSON.parse(functionCall.arguments)
+            : {},
+        },
+      });
+    }
 
     // 如果没有内容且没有finish_reason，跳过这个chunk
-    if (!text && !choice.finish_reason) {
+    if (parts.length === 0 && !choice.finish_reason) {
       return {
         candidates: [],
         text: '',
@@ -364,13 +402,7 @@ export class OpenAIContentGenerator implements ContentGenerator {
         {
           content: {
             role: 'model',
-            parts: text
-              ? [
-                  {
-                    text,
-                  },
-                ]
-              : [],
+            parts,
           },
           finishReason: choice.finish_reason
             ? this.convertFinishReason(choice.finish_reason)
@@ -380,7 +412,16 @@ export class OpenAIContentGenerator implements ContentGenerator {
       ],
       text,
       data: '',
-      functionCalls: [],
+      functionCalls: functionCall
+        ? [
+            {
+              name: functionCall.name || '',
+              args: functionCall.arguments
+                ? JSON.parse(functionCall.arguments)
+                : {},
+            },
+          ]
+        : [],
       executableCode: '',
       codeExecutionResult: '',
       usageMetadata: {
