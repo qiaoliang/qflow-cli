@@ -30,6 +30,9 @@ interface OpenAIRequest {
   max_tokens?: number;
   top_p?: number;
   stream?: boolean;
+  response_format?: {
+    type: 'json_object';
+  };
 }
 
 /**
@@ -283,12 +286,19 @@ export class OpenAIContentGenerator implements ContentGenerator {
       }
     }
 
+    // 处理JSON响应模式
+    let responseFormat: { type: 'json_object' } | undefined = undefined;
+    if (request.config?.responseMimeType === 'application/json') {
+      responseFormat = { type: 'json_object' };
+    }
+
     return {
       model: this.config.modelName,
       messages,
       temperature: this.config.temperature,
       max_tokens: this.config.maxTokens,
       top_p: this.config.topP,
+      response_format: responseFormat,
     };
   }
 
