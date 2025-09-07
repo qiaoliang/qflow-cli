@@ -169,7 +169,7 @@ jobs:
           registry-url: 'https://wombat-dressing-room.appspot.com'
           scope: '@google'
 
-      - name: 'Publish @google/gemini-cli-core'
+      - name: 'Publish @tiecode/tie-cli-core'
         env:
           IS_DRY_RUN: '${{ steps.vars.outputs.is_dry_run }}'
           NODE_AUTH_TOKEN: '${{ secrets.WOMBAT_TOKEN_CORE }}'

@@ -335,12 +335,14 @@ Logging in with Google... Please restart Gemini CLI to continue.
       settings.merged.security?.auth?.selectedType &&
       !settings.merged.security?.auth?.useExternal
     ) {
-      const error = validateAuthMethod(
-        settings.merged.security.auth.selectedType,
-      );
-      if (error) {
-        onAuthError(error);
-      }
+      (async () => {
+        const error = await validateAuthMethod(
+          settings.merged.security!.auth!.selectedType!,
+        );
+        if (error) {
+          onAuthError(error);
+        }
+      })();
     }
   }, [
     settings.merged.security?.auth?.selectedType,

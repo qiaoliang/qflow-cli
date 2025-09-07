@@ -11,8 +11,7 @@ import type { IndividualToolCallDisplay } from '../../types.js';
 import { ToolCallStatus } from '../../types.js';
 import { ToolMessage } from './ToolMessage.js';
 import { ToolConfirmationMessage } from './ToolConfirmationMessage.js';
-import { Colors } from '../../colors.js';
-import type { Config } from '@tiecode/tie-cli-core';
+// removed unused imports
 import { theme } from '../../semantic-colors.js';
 
 import { SHELL_COMMAND_NAME } from '../../constants.js';

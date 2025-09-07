@@ -11,10 +11,10 @@ import { getErrorMessage } from '@tiecode/tie-cli-core';
 import { AuthState } from '../types.js';
 import { validateAuthMethod } from '../../config/auth.js';
 
-export function validateAuthMethodWithSettings(
+export async function validateAuthMethodWithSettings(
   authType: AuthType,
   settings: LoadedSettings,
-): string | null {
+): Promise<string | null> {
   const enforcedType = settings.merged.security?.auth?.enforcedType;
   if (enforcedType && enforcedType !== authType) {
     return `Authentication is enforced to be ${enforcedType}, but you are currently using ${authType}.`;
@@ -22,7 +22,7 @@ export function validateAuthMethodWithSettings(
   if (settings.merged.security?.auth?.useExternal) {
     return null;
   }
-  return validateAuthMethod(authType);
+  return await validateAuthMethod(authType);
 }
 
 export const useAuthCommand = (settings: LoadedSettings, config: Config) => {
@@ -57,7 +57,7 @@ export const useAuthCommand = (settings: LoadedSettings, config: Config) => {
         }
         return;
       }
-      const error = validateAuthMethodWithSettings(authType, settings);
+      const error = await validateAuthMethodWithSettings(authType, settings);
       if (error) {
         onAuthError(error);
         return;

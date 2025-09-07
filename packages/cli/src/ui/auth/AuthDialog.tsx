@@ -5,22 +5,19 @@
  */
 
 import type React from 'react';
-import { useCallback } from 'react';
+import { useState } from 'react';
 import { Box, Text } from 'ink';
 import { Colors } from '../colors.js';
 import { RadioButtonSelect } from '../components/shared/RadioButtonSelect.js';
 import type { LoadedSettings } from '../../config/settings.js';
 import { SettingScope } from '../../config/settings.js';
-import {
-  AuthType,
-  clearCachedCredentialFile,
-  type Config,
-} from '@tiecode/tie-cli-core';
+import { AuthType, type Config } from '@tiecode/tie-cli-core';
 import { validateAuthMethod } from '../../config/auth.js';
 import { useKeypress } from '../hooks/useKeypress.js';
-import { AuthState } from '../types.js';
-import { runExitCleanup } from '../../utils/cleanup.js';
-import { validateAuthMethodWithSettings } from './useAuth.js';
+import type { AuthState } from '../types.js';
+import type { UIActions } from '../contexts/UIActionsContext.js';
+import { useUIActions } from '../contexts/UIActionsContext.js';
+import { CustomLLMConfigDialog } from '../components/CustomLLMConfigDialog.js';
 
 interface AuthDialogProps {
   config: Config;
@@ -31,23 +28,24 @@ interface AuthDialogProps {
 }
 
 export function AuthDialog({
-  config,
+  config: _config,
   settings,
-  setAuthState,
+  setAuthState: _setAuthState,
   authError,
   onAuthError,
 }: AuthDialogProps): React.JSX.Element {
-
+  const actions: UIActions = useUIActions();
   const [showCustomLLMConfig, setShowCustomLLMConfig] = useState(false);
   const [hasUserSelected, setHasUserSelected] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(() => {
-    if (initialErrorMessage) {
-      return initialErrorMessage;
-    }
-
-    const defaultAuthType = parseDefaultAuthType(
-      process.env['GEMINI_DEFAULT_AUTH_TYPE'],
-    );
+  // 移除本地 errorMessage 状态，统一通过 onAuthError 上报错误
+  const _initErrorMessage = (() => {
+    const defaultAuthType = ((): AuthType | null => {
+      const env = process.env['GEMINI_DEFAULT_AUTH_TYPE'];
+      if (env && Object.values(AuthType).includes(env as AuthType)) {
+        return env as AuthType;
+      }
+      return null;
+    })();
 
     if (process.env['GEMINI_DEFAULT_AUTH_TYPE'] && defaultAuthType === null) {
       return (
@@ -73,7 +71,10 @@ export function AuthDialog({
       return 'Existing API key detected (GEMINI_API_KEY). Select "Gemini API Key" option to use it.';
     }
     return null;
-  });
+  })();
+  if (_initErrorMessage) {
+    onAuthError(_initErrorMessage);
+  }
   let items = [
     {
       label: 'Custom LLM API',
@@ -104,7 +105,7 @@ export function AuthDialog({
     );
   }
 
-  let defaultAuthType = null;
+  let defaultAuthType: AuthType | null = null;
   const defaultAuthTypeEnv = process.env['GEMINI_DEFAULT_AUTH_TYPE'];
   if (
     defaultAuthTypeEnv &&
@@ -161,7 +162,7 @@ export function AuthDialog({
     );
     const success = writeCustomLlmConfigToEnvFile(config);
     if (!success) {
-      setErrorMessage('保存配置到 .tie/.env 文件失败');
+      onAuthError('保存配置到 .tie/.env 文件失败');
       setShowCustomLLMConfig(false);
       return;
     }
@@ -169,12 +170,11 @@ export function AuthDialog({
     // 验证配置
     const error = await validateAuthMethod(AuthType.TIE_LLM);
     if (error) {
-      setErrorMessage(error);
+      onAuthError(error);
       setShowCustomLLMConfig(false);
     } else {
-      setErrorMessage(null);
       setShowCustomLLMConfig(false);
-      onSelect(AuthType.TIE_LLM, SettingScope.User);
+      actions.handleAuthSelect(AuthType.TIE_LLM, SettingScope.User);
     }
   };
 
@@ -189,13 +189,12 @@ export function AuthDialog({
     );
     const success = writeCustomLlmConfigToEnvFile(config);
     if (!success) {
-      setErrorMessage('保存配置到 .tie/.env 文件失败');
+      onAuthError('保存配置到 .tie/.env 文件失败');
     }
   };
 
   const handleCustomLLMConfigCancel = () => {
     setShowCustomLLMConfig(false);
-    setErrorMessage(null);
   };
 
   const handleAuthSelect = async (authMethod: AuthType) => {
@@ -212,25 +211,21 @@ export function AuthDialog({
         // 如果环境变量已配置，直接使用
         const error = await validateAuthMethod(authMethod);
         if (error) {
-          setErrorMessage(error);
+          onAuthError(error);
         } else {
-          setErrorMessage(null);
-          onSelect(authMethod, SettingScope.User);
+          actions.handleAuthSelect(authMethod, SettingScope.User);
         }
       } else {
         // 如果环境变量未配置，显示配置对话框
         setShowCustomLLMConfig(true);
-        setErrorMessage(null);
       }
     } else {
       const error = await validateAuthMethod(authMethod);
       if (error) {
-        setErrorMessage(error);
+        onAuthError(error);
       } else {
-        setErrorMessage(null);
-        onSelect(authMethod, SettingScope.User);
+        actions.handleAuthSelect(authMethod, SettingScope.User);
       }
-
     }
   };
 
@@ -244,10 +239,10 @@ export function AuthDialog({
         }
         if (!hasUserSelected) {
           // Prevent exiting if user hasn't selected an auth method
-          setErrorMessage('请选择一个认证方式。按 Ctrl+C 两次退出。');
+          onAuthError('请选择一个认证方式。按 Ctrl+C 两次退出。');
           return;
         }
-        onSelect(undefined, SettingScope.User);
+        actions.handleAuthSelect(undefined, SettingScope.User);
       }
     },
     { isActive: true },

@@ -12,7 +12,7 @@ import { useGitBranchName } from './useGitBranchName.js';
 import { fs, vol } from 'memfs'; // For mocking fs
 import { EventEmitter } from 'node:events';
 import { exec as mockExec, type ChildProcess } from 'node:child_process';
-import type { FSWatcher } from 'memfs/lib/volume.js';
+import type { FSWatcher } from 'fs';
 
 // Mock child_process
 vi.mock('child_process');
@@ -205,9 +205,10 @@ describe('useGitBranchName', () => {
   it('should cleanup watcher on unmount', async ({ skip }) => {
     skip(); // TODO: fix
     const closeMock = vi.fn();
-    const watchMock = vi.spyOn(fs, 'watch').mockReturnValue({
-      close: closeMock,
-    } as unknown as FSWatcher);
+    const fakeWatcher = { close: closeMock } as unknown as FSWatcher;
+    const watchMock = vi.spyOn(fs, 'watch').mockReturnValue(
+      fakeWatcher as unknown as ReturnType<typeof fs.watch>,
+    );
 
     (mockExec as MockedFunction<typeof mockExec>).mockImplementation(
       (_command, _options, callback) => {

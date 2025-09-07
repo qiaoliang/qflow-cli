@@ -425,10 +425,13 @@ export class IdeClient {
       };
       const options = fetchOptions as unknown as import('undici').RequestInit;
       const response = await fetchFn(url, options);
+      const headersObject = Object.fromEntries(
+        response.headers as unknown as Iterable<[string, string]>,
+      );
       return new Response(response.body as ReadableStream<unknown> | null, {
         status: response.status,
         statusText: response.statusText,
-        headers: response.headers,
+        headers: headersObject,
       });
     };
   }
