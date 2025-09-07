@@ -220,12 +220,14 @@ export function validateCustomLlmConfig(): {
 
 /**
  * 将自定义LLM配置写入 .tie/.env 文件
- * @param config 自定义LLM配置
+ * @param config 自定义LLM配置（可以是完整的CustomLlmConfig或简化的配置对象）
  * @param workspaceDir 工作目录，默认为当前工作目录
  * @returns 写入是否成功
  */
 export function writeCustomLlmConfigToEnvFile(
-  config: CustomLlmConfig,
+  config:
+    | CustomLlmConfig
+    | { apiKey: string; endpoint: string; modelName: string },
   workspaceDir: string = process.cwd(),
 ): boolean {
   try {
@@ -266,22 +268,22 @@ export function writeCustomLlmConfigToEnvFile(
     existingEnvVars['TIE_MODEL_NAME'] = config.modelName;
 
     // 如果有其他可选配置，也写入
-    if (config.temperature !== undefined) {
+    if ('temperature' in config && config.temperature !== undefined) {
       existingEnvVars['CUSTOM_LLM_TEMPERATURE'] = config.temperature.toString();
     }
-    if (config.maxTokens !== undefined) {
+    if ('maxTokens' in config && config.maxTokens !== undefined) {
       existingEnvVars['CUSTOM_LLM_MAX_TOKENS'] = config.maxTokens.toString();
     }
-    if (config.topP !== undefined) {
+    if ('topP' in config && config.topP !== undefined) {
       existingEnvVars['CUSTOM_LLM_TOP_P'] = config.topP.toString();
     }
-    if (config.timeout !== undefined) {
+    if ('timeout' in config && config.timeout !== undefined) {
       existingEnvVars['CUSTOM_LLM_TIMEOUT'] = config.timeout.toString();
     }
-    if (config.retries !== undefined) {
+    if ('retries' in config && config.retries !== undefined) {
       existingEnvVars['CUSTOM_LLM_RETRIES'] = config.retries.toString();
     }
-    if (config.streamEnabled !== undefined) {
+    if ('streamEnabled' in config && config.streamEnabled !== undefined) {
       existingEnvVars['CUSTOM_LLM_STREAM_ENABLED'] =
         config.streamEnabled.toString();
     }

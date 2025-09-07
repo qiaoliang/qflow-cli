@@ -54,7 +54,14 @@ export const useAuthCommand = (
         await config.refreshAuth(authType);
         console.log(`Authenticated via "${authType}".`);
       } catch (e) {
-        setAuthError(`Failed to login. Message: ${getErrorMessage(e)}`);
+        const errorMessage = getErrorMessage(e);
+        if (errorMessage === 'CUSTOM_LLM_CONFIGURATION_INCOMPLETE') {
+          setAuthError(
+            'Custom LLM configuration is incomplete. Please configure TIE_API_KEY, TIE_ENDPOINT, and TIE_MODEL_NAME environment variables.',
+          );
+        } else {
+          setAuthError(`Failed to login. Message: ${errorMessage}`);
+        }
         openAuthDialog();
       } finally {
         setIsAuthenticating(false);

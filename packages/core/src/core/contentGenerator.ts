@@ -60,6 +60,8 @@ export type ContentGeneratorConfig = {
   authType?: AuthType;
   proxy?: string;
   customLlmConfig?: CustomLlmConfig;
+  /** 标记配置不完整，需要用户重新配置 */
+  needsConfiguration?: boolean;
 };
 
 export function createContentGeneratorConfig(
@@ -86,6 +88,9 @@ export function createContentGeneratorConfig(
     if (customConfig) {
       contentGeneratorConfig.model = customConfig.modelName;
       contentGeneratorConfig.customLlmConfig = customConfig;
+    } else {
+      // 如果自定义LLM配置不完整，标记需要重新配置
+      contentGeneratorConfig.needsConfiguration = true;
     }
     return contentGeneratorConfig;
   }
@@ -123,6 +128,11 @@ export async function createContentGenerator(
   gcConfig: Config,
   sessionId?: string,
 ): Promise<ContentGenerator> {
+  // 如果配置需要重新配置，抛出特殊错误
+  if (config.needsConfiguration) {
+    throw new Error('CUSTOM_LLM_CONFIGURATION_INCOMPLETE');
+  }
+
   // 如果配置了自定义LLM，创建CustomLLMAgent
   if (config.authType === AuthType.CUSTOM_LLM && config.customLlmConfig) {
     // 创建Gemini ContentGenerator作为回退
