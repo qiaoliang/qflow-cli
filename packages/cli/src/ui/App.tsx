@@ -354,20 +354,26 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
         return;
       }
 
-      // 检查TIE环境变量的完整性
-      const hasTieApiKey = !!process.env['TIE_API_KEY'];
-      const hasTieEndpoint = !!process.env['TIE_ENDPOINT'];
-      const hasTieModelName = !!process.env['TIE_MODEL_NAME'];
-      const hasPartialTieConfig = hasTieApiKey || hasTieEndpoint || hasTieModelName;
-      const hasCompleteTieConfig = hasTieApiKey && hasTieEndpoint && hasTieModelName;
+      // 只有当设置中指定了 CUSTOM_LLM 时才检查TIE环境变量的完整性
+      if (
+        settings.merged.security?.auth?.selectedType === AuthType.CUSTOM_LLM
+      ) {
+        const hasTieApiKey = !!process.env['TIE_API_KEY'];
+        const hasTieEndpoint = !!process.env['TIE_ENDPOINT'];
+        const hasTieModelName = !!process.env['TIE_MODEL_NAME'];
+        const hasPartialTieConfig =
+          hasTieApiKey || hasTieEndpoint || hasTieModelName;
+        const hasCompleteTieConfig =
+          hasTieApiKey && hasTieEndpoint && hasTieModelName;
 
-      // 如果部分TIE环境变量存在但不完整，强制显示认证对话框
-      if (hasPartialTieConfig && !hasCompleteTieConfig) {
-        setAuthError(
-          'TIE环境变量配置不完整。请设置TIE_API_KEY、TIE_ENDPOINT和TIE_MODEL_NAME三个环境变量，或选择其他认证方式。',
-        );
-        openAuthDialog();
-        return;
+        // 如果部分TIE环境变量存在但不完整，强制显示认证对话框
+        if (hasPartialTieConfig && !hasCompleteTieConfig) {
+          setAuthError(
+            'TIE环境变量配置不完整。请设置TIE_API_KEY、TIE_ENDPOINT和TIE_MODEL_NAME三个环境变量，或选择其他认证方式。',
+          );
+          openAuthDialog();
+          return;
+        }
       }
 
       if (
