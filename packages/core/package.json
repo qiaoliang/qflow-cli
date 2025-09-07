@@ -1,6 +1,6 @@
 {
   "name": "@tiecode/tie-cli-core",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Tie CLI Core",
   "repository": {
     "type": "git",
