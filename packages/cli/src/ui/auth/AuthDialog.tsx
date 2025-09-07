@@ -5,40 +5,39 @@
  */
 
 import type React from 'react';
-import { useState } from 'react';
+import { useCallback } from 'react';
 import { Box, Text } from 'ink';
 import { Colors } from '../colors.js';
-import { RadioButtonSelect } from './shared/RadioButtonSelect.js';
-import { CustomLLMConfigDialog } from './CustomLLMConfigDialog.js';
+import { RadioButtonSelect } from '../components/shared/RadioButtonSelect.js';
 import type { LoadedSettings } from '../../config/settings.js';
 import { SettingScope } from '../../config/settings.js';
-import { AuthType } from '@tiecode/tie-cli-core';
+import {
+  AuthType,
+  clearCachedCredentialFile,
+  type Config,
+} from '@tiecode/tie-cli-core';
 import { validateAuthMethod } from '../../config/auth.js';
 import { useKeypress } from '../hooks/useKeypress.js';
+import { AuthState } from '../types.js';
+import { runExitCleanup } from '../../utils/cleanup.js';
+import { validateAuthMethodWithSettings } from './useAuth.js';
 
 interface AuthDialogProps {
-  onSelect: (authMethod: AuthType | undefined, scope: SettingScope) => void;
+  config: Config;
   settings: LoadedSettings;
-  initialErrorMessage?: string | null;
-}
-
-function parseDefaultAuthType(
-  defaultAuthType: string | undefined,
-): AuthType | null {
-  if (
-    defaultAuthType &&
-    Object.values(AuthType).includes(defaultAuthType as AuthType)
-  ) {
-    return defaultAuthType as AuthType;
-  }
-  return null;
+  setAuthState: (state: AuthState) => void;
+  authError: string | null;
+  onAuthError: (error: string) => void;
 }
 
 export function AuthDialog({
-  onSelect,
+  config,
   settings,
-  initialErrorMessage,
+  setAuthState,
+  authError,
+  onAuthError,
 }: AuthDialogProps): React.JSX.Element {
+
   const [showCustomLLMConfig, setShowCustomLLMConfig] = useState(false);
   const [hasUserSelected, setHasUserSelected] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(() => {
@@ -105,14 +104,20 @@ export function AuthDialog({
     );
   }
 
+  let defaultAuthType = null;
+  const defaultAuthTypeEnv = process.env['GEMINI_DEFAULT_AUTH_TYPE'];
+  if (
+    defaultAuthTypeEnv &&
+    Object.values(AuthType).includes(defaultAuthTypeEnv as AuthType)
+  ) {
+    defaultAuthType = defaultAuthTypeEnv as AuthType;
+  }
+
   let initialAuthIndex = items.findIndex((item) => {
     if (settings.merged.security?.auth?.selectedType) {
       return item.value === settings.merged.security.auth.selectedType;
     }
 
-    const defaultAuthType = parseDefaultAuthType(
-      process.env['GEMINI_DEFAULT_AUTH_TYPE'],
-    );
     if (defaultAuthType) {
       return item.value === defaultAuthType;
     }
@@ -225,6 +230,7 @@ export function AuthDialog({
         setErrorMessage(null);
         onSelect(authMethod, SettingScope.User);
       }
+
     }
   };
 
@@ -233,7 +239,7 @@ export function AuthDialog({
       if (key.name === 'escape') {
         // Prevent exit if there is an error message.
         // This means they user is not authenticated yet.
-        if (errorMessage) {
+        if (authError) {
           return;
         }
         if (!hasUserSelected) {
@@ -282,9 +288,9 @@ export function AuthDialog({
           onHighlight={() => setHasUserSelected(true)}
         />
       </Box>
-      {errorMessage && (
+      {authError && (
         <Box marginTop={1}>
-          <Text color={Colors.AccentRed}>{errorMessage}</Text>
+          <Text color={Colors.AccentRed}>{authError}</Text>
         </Box>
       )}
       <Box marginTop={1}>

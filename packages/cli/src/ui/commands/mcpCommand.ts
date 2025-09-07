@@ -141,7 +141,7 @@ const getMcpStatus = async (
       try {
         const { MCPOAuthTokenStorage } = await import('@tiecode/tie-cli-core');
         const tokenStorage = new MCPOAuthTokenStorage();
-        const hasToken = await tokenStorage.getToken(serverName);
+        const hasToken = await tokenStorage.getCredentials(serverName);
         if (hasToken) {
           const isExpired = tokenStorage.isTokenExpired(hasToken.token);
           if (isExpired) {
