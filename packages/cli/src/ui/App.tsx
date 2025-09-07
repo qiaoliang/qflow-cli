@@ -348,13 +348,19 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      // 如果设置中没有指定 authType，总是显示认证对话框
+      if (!settings.merged.security?.auth?.selectedType) {
+        openAuthDialog();
+        return;
+      }
+
       // 检查TIE环境变量的完整性
       const hasTieApiKey = !!process.env['TIE_API_KEY'];
       const hasTieEndpoint = !!process.env['TIE_ENDPOINT'];
       const hasTieModelName = !!process.env['TIE_MODEL_NAME'];
       const hasPartialTieConfig = hasTieApiKey || hasTieEndpoint || hasTieModelName;
       const hasCompleteTieConfig = hasTieApiKey && hasTieEndpoint && hasTieModelName;
-      
+
       // 如果部分TIE环境变量存在但不完整，强制显示认证对话框
       if (hasPartialTieConfig && !hasCompleteTieConfig) {
         setAuthError(
@@ -363,7 +369,7 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
         openAuthDialog();
         return;
       }
-      
+
       if (
         settings.merged.security?.auth?.enforcedType &&
         settings.merged.security?.auth.selectedType &&
