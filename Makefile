@@ -53,7 +53,7 @@ debug:
 
 
 run-npx:
-	npx https://github.com/google-gemini/tie-cli
+	npx https://github.com/qiaoliang/tie-cli
 
 create-alias:
 	scripts/create_alias.sh

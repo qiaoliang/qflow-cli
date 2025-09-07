@@ -1,8 +1,8 @@
 # Tie CLI
 
-[![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
+[![Gemini CLI CI](https://github.com/qiaoliang/tie-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/qiaoliang/tie-cli/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/npm/v/@google/gemini-cli)](https://www.npmjs.com/package/@google/gemini-cli)
-[![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/google-gemini/gemini-cli/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/qiaoliang/tie-cli/blob/main/LICENSE)
 
 ![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
 
@@ -207,7 +207,7 @@ gemini
 #### Analyze existing code
 
 ```bash
-git clone https://github.com/google-gemini/gemini-cli
+git clone https://github.com/qiaoliang/tie-cli
 cd gemini-cli
 gemini
 > Give me a summary of all of the changes that went in yesterday
@@ -290,8 +290,8 @@ Check our [Official Roadmap](https://github.com/orgs/google-gemini/projects/11/)
 
 - **[Official Roadmap](./ROADMAP.md)** - See what's coming next
 - **[NPM Package](https://www.npmjs.com/package/@google/gemini-cli)** - Package registry
-- **[GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)** - Report bugs or request features
-- **[Security Advisories](https://github.com/google-gemini/gemini-cli/security/advisories)** - Security updates
+- **[GitHub Issues](https://github.com/qiaoliang/tie-cli/issues)** - Report bugs or request features
+- **[Security Advisories](https://github.com/qiaoliang/tie-cli/security/advisories)** - Security updates
 
 ### Uninstall
 

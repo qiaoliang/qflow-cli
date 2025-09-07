@@ -16,7 +16,7 @@ export const SETTINGS_DIRECTORY_NAME = '.tie';
 export const USER_SETTINGS_DIR = path.join(homedir(), SETTINGS_DIRECTORY_NAME);
 export const USER_SETTINGS_PATH = path.join(USER_SETTINGS_DIR, 'settings.json');
 
-// Reconcile with https://github.com/google-gemini/gemini-cli/blob/b09bc6656080d4d12e1d06734aae2ec33af5c1ed/packages/cli/src/config/settings.ts#L53
+// Reconcile with https://github.com/qiaoliang/tie-cli/blob/b09bc6656080d4d12e1d06734aae2ec33af5c1ed/packages/cli/src/config/settings.ts#L53
 export interface Settings {
   mcpServers?: Record<string, MCPServerConfig>;
   coreTools?: string[];

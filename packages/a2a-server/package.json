@@ -1,11 +1,11 @@
 {
   "name": "@tiecode/tie-cli-a2a-server",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "description": "Gemini CLI A2A Server",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/google-gemini/gemini-cli.git",
+    "url": "git+https://github.com/qiaoliang/tie-cli.git",
     "directory": "packages/a2a-server"
   },
   "type": "module",
