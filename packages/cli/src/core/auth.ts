@@ -8,7 +8,7 @@ import {
   type AuthType,
   type Config,
   getErrorMessage,
-} from '@google/gemini-cli-core';
+} from '@tiecode/tie-cli-core';
 
 /**
  * Handles the initial authentication flow.

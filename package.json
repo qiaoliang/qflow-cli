@@ -1,11 +1,6 @@
 {
-<<<<<<< HEAD
   "name": "@tiecode/tie-cli",
   "version": "0.3.2",
-=======
-  "name": "@google/gemini-cli",
-  "version": "0.3.4",
->>>>>>> c031f538
   "engines": {
     "node": ">=20.0.0"
   },
