@@ -1,5 +1,5 @@
 {
-  "name": "@google/gemini-cli-test-utils",
+  "name": "@tiecode/tie-cli-test-utils",
   "version": "0.3.1",
   "private": true,
   "main": "src/index.ts",

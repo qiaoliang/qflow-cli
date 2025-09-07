@@ -64,7 +64,7 @@ import type {
   Config,
   IdeContext,
   DetectedIde,
-} from '@google/gemini-cli-core';
+} from '@tiecode/tie-cli-core';
 import {
   ApprovalMode,
   getAllGeminiMdFilenames,
@@ -79,7 +79,7 @@ import {
   UserTierId,
   DEFAULT_GEMINI_FLASH_MODEL,
   IdeClient,
-} from '@google/gemini-cli-core';
+} from '@tiecode/tie-cli-core';
 import type { IdeIntegrationNudgeResult } from './IdeIntegrationNudge.js';
 import { IdeIntegrationNudge } from './IdeIntegrationNudge.js';
 import { validateAuthMethod } from '../config/auth.js';

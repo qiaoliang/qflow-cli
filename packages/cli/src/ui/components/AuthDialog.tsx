@@ -12,7 +12,7 @@ import { RadioButtonSelect } from './shared/RadioButtonSelect.js';
 import { CustomLLMConfigDialog } from './CustomLLMConfigDialog.js';
 import type { LoadedSettings } from '../../config/settings.js';
 import { SettingScope } from '../../config/settings.js';
-import { AuthType } from '@google/gemini-cli-core';
+import { AuthType } from '@tiecode/tie-cli-core';
 import { validateAuthMethod } from '../../config/auth.js';
 import { useKeypress } from '../hooks/useKeypress.js';
 
@@ -152,7 +152,7 @@ export function AuthDialog({
 
     // 写入 .tie/.env 文件
     const { writeCustomLlmConfigToEnvFile } = await import(
-      '@google/gemini-cli-core'
+      '@tiecode/tie-cli-core'
     );
     const success = writeCustomLlmConfigToEnvFile(config);
     if (!success) {
@@ -180,7 +180,7 @@ export function AuthDialog({
   }) => {
     // 写入 .tie/.env 文件
     const { writeCustomLlmConfigToEnvFile } = await import(
-      '@google/gemini-cli-core'
+      '@tiecode/tie-cli-core'
     );
     const success = writeCustomLlmConfigToEnvFile(config);
     if (!success) {
