@@ -50,7 +50,7 @@ export enum AuthType {
   USE_GEMINI = 'gemini-api-key',
   USE_VERTEX_AI = 'vertex-ai',
   CLOUD_SHELL = 'cloud-shell',
-  CUSTOM_LLM = 'custom-llm',
+  TIE_LLM = 'tie-llm',
 }
 
 export type ContentGeneratorConfig = {
@@ -83,7 +83,7 @@ export function createContentGeneratorConfig(
   };
 
   // If we are using custom LLM, load the custom configuration
-  if (authType === AuthType.CUSTOM_LLM) {
+  if (authType === AuthType.TIE_LLM) {
     const customConfig = loadCustomLlmConfig();
     if (customConfig) {
       contentGeneratorConfig.model = customConfig.modelName;
@@ -134,7 +134,7 @@ export async function createContentGenerator(
   }
 
   // 如果配置了自定义LLM，创建CustomLLMAgent
-  if (config.authType === AuthType.CUSTOM_LLM && config.customLlmConfig) {
+  if (config.authType === AuthType.TIE_LLM && config.customLlmConfig) {
     // 创建Gemini ContentGenerator作为回退
     const geminiConfig = { ...config, authType: AuthType.USE_GEMINI };
     const geminiGenerator = await createOriginalContentGenerator(

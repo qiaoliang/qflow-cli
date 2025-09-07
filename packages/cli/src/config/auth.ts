@@ -13,7 +13,7 @@ export async function validateAuthMethod(
   loadEnvironment(loadSettings().merged);
 
   // 添加自定义LLM验证
-  if (authMethod === AuthType.CUSTOM_LLM) {
+  if (authMethod === AuthType.TIE_LLM) {
     try {
       const validation = validateCustomLlmConfig();
       if (!validation.isValid) {

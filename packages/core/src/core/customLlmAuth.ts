@@ -65,49 +65,49 @@ export function loadCustomLlmConfig(): CustomLlmConfig | null {
   }
 
   // 解析可选的数值配置
-  const temperature = process.env['CUSTOM_LLM_TEMPERATURE']
-    ? parseFloat(process.env['CUSTOM_LLM_TEMPERATURE'])
+  const temperature = process.env['TIE_TEMPERATURE']
+    ? parseFloat(process.env['TIE_TEMPERATURE'])
     : DEFAULT_CUSTOM_LLM_CONFIG.temperature;
 
-  const maxTokens = process.env['CUSTOM_LLM_MAX_TOKENS']
-    ? parseInt(process.env['CUSTOM_LLM_MAX_TOKENS'], 10)
+  const maxTokens = process.env['TIE_MAX_TOKENS']
+    ? parseInt(process.env['TIE_MAX_TOKENS'], 10)
     : DEFAULT_CUSTOM_LLM_CONFIG.maxTokens;
 
-  const topP = process.env['CUSTOM_LLM_TOP_P']
-    ? parseFloat(process.env['CUSTOM_LLM_TOP_P'])
+  const topP = process.env['TIE_TOP_P']
+    ? parseFloat(process.env['TIE_TOP_P'])
     : DEFAULT_CUSTOM_LLM_CONFIG.topP;
 
-  const timeout = process.env['CUSTOM_LLM_TIMEOUT']
-    ? parseInt(process.env['CUSTOM_LLM_TIMEOUT'], 10)
+  const timeout = process.env['TIE_TIMEOUT']
+    ? parseInt(process.env['TIE_TIMEOUT'], 10)
     : DEFAULT_CUSTOM_LLM_CONFIG.timeout;
 
-  const retries = process.env['CUSTOM_LLM_RETRIES']
-    ? parseInt(process.env['CUSTOM_LLM_RETRIES'], 10)
+  const retries = process.env['TIE_RETRIES']
+    ? parseInt(process.env['TIE_RETRIES'], 10)
     : DEFAULT_CUSTOM_LLM_CONFIG.retries;
 
-  const streamEnabled = process.env['CUSTOM_LLM_STREAM_ENABLED']
-    ? process.env['CUSTOM_LLM_STREAM_ENABLED'].toLowerCase() === 'true'
+  const streamEnabled = process.env['TIE_STREAM_ENABLED']
+    ? process.env['TIE_STREAM_ENABLED'].toLowerCase() === 'true'
     : DEFAULT_CUSTOM_LLM_CONFIG.streamEnabled;
 
   // 验证数值范围
   if (temperature !== undefined && (temperature < 0 || temperature > 2)) {
-    throw new Error('CUSTOM_LLM_TEMPERATURE must be between 0 and 2');
+    throw new Error('TIE_TEMPERATURE must be between 0 and 2');
   }
 
   if (maxTokens !== undefined && (maxTokens < 1 || maxTokens > 100000)) {
-    throw new Error('CUSTOM_LLM_MAX_TOKENS must be between 1 and 100000');
+    throw new Error('TIE_MAX_TOKENS must be between 1 and 100000');
   }
 
   if (topP !== undefined && (topP < 0 || topP > 1)) {
-    throw new Error('CUSTOM_LLM_TOP_P must be between 0 and 1');
+    throw new Error('TIE_TOP_P must be between 0 and 1');
   }
 
   if (timeout !== undefined && timeout < 1000) {
-    throw new Error('CUSTOM_LLM_TIMEOUT must be at least 1000ms');
+    throw new Error('TIE_TIMEOUT must be at least 1000ms');
   }
 
   if (retries !== undefined && (retries < 0 || retries > 10)) {
-    throw new Error('CUSTOM_LLM_RETRIES must be between 0 and 10');
+    throw new Error('TIE_RETRIES must be between 0 and 10');
   }
 
   return {
@@ -170,45 +170,43 @@ export function validateCustomLlmConfig(): {
   }
 
   // 验证可选参数
-  const temperature = process.env['CUSTOM_LLM_TEMPERATURE'];
+  const temperature = process.env['TIE_TEMPERATURE'];
   if (temperature !== undefined) {
     const temp = parseFloat(temperature);
     if (isNaN(temp) || temp < 0 || temp > 2) {
-      errors.push('CUSTOM_LLM_TEMPERATURE must be a number between 0 and 2');
+      errors.push('TIE_TEMPERATURE must be a number between 0 and 2');
     }
   }
 
-  const maxTokens = process.env['CUSTOM_LLM_MAX_TOKENS'];
+  const maxTokens = process.env['TIE_MAX_TOKENS'];
   if (maxTokens !== undefined) {
     const tokens = parseInt(maxTokens, 10);
     if (isNaN(tokens) || tokens < 1 || tokens > 100000) {
-      errors.push(
-        'CUSTOM_LLM_MAX_TOKENS must be a number between 1 and 100000',
-      );
+      errors.push('TIE_MAX_TOKENS must be a number between 1 and 100000');
     }
   }
 
-  const topP = process.env['CUSTOM_LLM_TOP_P'];
+  const topP = process.env['TIE_TOP_P'];
   if (topP !== undefined) {
     const p = parseFloat(topP);
     if (isNaN(p) || p < 0 || p > 1) {
-      errors.push('CUSTOM_LLM_TOP_P must be a number between 0 and 1');
+      errors.push('TIE_TOP_P must be a number between 0 and 1');
     }
   }
 
-  const timeout = process.env['CUSTOM_LLM_TIMEOUT'];
+  const timeout = process.env['TIE_TIMEOUT'];
   if (timeout !== undefined) {
     const t = parseInt(timeout, 10);
     if (isNaN(t) || t < 1000) {
-      errors.push('CUSTOM_LLM_TIMEOUT must be a number >= 1000');
+      errors.push('TIE_TIMEOUT must be a number >= 1000');
     }
   }
 
-  const retries = process.env['CUSTOM_LLM_RETRIES'];
+  const retries = process.env['TIE_RETRIES'];
   if (retries !== undefined) {
     const r = parseInt(retries, 10);
     if (isNaN(r) || r < 0 || r > 10) {
-      errors.push('CUSTOM_LLM_RETRIES must be a number between 0 and 10');
+      errors.push('TIE_RETRIES must be a number between 0 and 10');
     }
   }
 
@@ -269,23 +267,22 @@ export function writeCustomLlmConfigToEnvFile(
 
     // 如果有其他可选配置，也写入
     if ('temperature' in config && config.temperature !== undefined) {
-      existingEnvVars['CUSTOM_LLM_TEMPERATURE'] = config.temperature.toString();
+      existingEnvVars['TIE_TEMPERATURE'] = config.temperature.toString();
     }
     if ('maxTokens' in config && config.maxTokens !== undefined) {
-      existingEnvVars['CUSTOM_LLM_MAX_TOKENS'] = config.maxTokens.toString();
+      existingEnvVars['TIE_MAX_TOKENS'] = config.maxTokens.toString();
     }
     if ('topP' in config && config.topP !== undefined) {
-      existingEnvVars['CUSTOM_LLM_TOP_P'] = config.topP.toString();
+      existingEnvVars['TIE_TOP_P'] = config.topP.toString();
     }
     if ('timeout' in config && config.timeout !== undefined) {
-      existingEnvVars['CUSTOM_LLM_TIMEOUT'] = config.timeout.toString();
+      existingEnvVars['TIE_TIMEOUT'] = config.timeout.toString();
     }
     if ('retries' in config && config.retries !== undefined) {
-      existingEnvVars['CUSTOM_LLM_RETRIES'] = config.retries.toString();
+      existingEnvVars['TIE_RETRIES'] = config.retries.toString();
     }
     if ('streamEnabled' in config && config.streamEnabled !== undefined) {
-      existingEnvVars['CUSTOM_LLM_STREAM_ENABLED'] =
-        config.streamEnabled.toString();
+      existingEnvVars['TIE_STREAM_ENABLED'] = config.streamEnabled.toString();
     }
 
     // 生成新的 .env 文件内容

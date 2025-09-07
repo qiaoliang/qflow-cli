@@ -96,7 +96,7 @@ describe('validateNonInterActiveAuth', () => {
     expect(processExitSpy).toHaveBeenCalledWith(1);
   });
 
-  it('uses CUSTOM_LLM if all custom LLM environment variables are set', async () => {
+  it('uses TIE_LLM if all custom LLM environment variables are set', async () => {
     process.env['TIE_API_KEY'] = 'test-key';
     process.env['TIE_ENDPOINT'] = 'https://api.example.com';
     process.env['TIE_MODEL_NAME'] = 'test-model';
@@ -109,7 +109,7 @@ describe('validateNonInterActiveAuth', () => {
       nonInteractiveConfig,
       mockSettings,
     );
-    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.CUSTOM_LLM);
+    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.TIE_LLM);
   });
 
   it('uses LOGIN_WITH_GOOGLE if GOOGLE_GENAI_USE_GCA is set', async () => {
@@ -171,7 +171,7 @@ describe('validateNonInterActiveAuth', () => {
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_VERTEX_AI);
   });
 
-  it('uses CUSTOM_LLM if all custom LLM env vars are set, even with other env vars', async () => {
+  it('uses TIE_LLM if all custom LLM env vars are set, even with other env vars', async () => {
     process.env['TIE_API_KEY'] = 'test-key';
     process.env['TIE_ENDPOINT'] = 'https://api.example.com';
     process.env['TIE_MODEL_NAME'] = 'test-model';
@@ -189,7 +189,7 @@ describe('validateNonInterActiveAuth', () => {
       nonInteractiveConfig,
       mockSettings,
     );
-    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.CUSTOM_LLM);
+    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.TIE_LLM);
   });
 
   it('uses GEMINI_API_KEY if both GEMINI_API_KEY and GOOGLE_GENAI_USE_GCA are set (no custom LLM)', async () => {

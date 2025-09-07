@@ -73,8 +73,8 @@ describe('AuthDialog', () => {
     );
   });
 
-  describe('CUSTOM_LLM environment variables', () => {
-    it('should detect CUSTOM_LLM environment variables', () => {
+  describe('TIE_LLM environment variables', () => {
+    it('should detect TIE_LLM environment variables', () => {
       process.env['TIE_API_KEY'] = 'test-key';
       process.env['TIE_ENDPOINT'] = 'https://api.example.com';
       process.env['TIE_MODEL_NAME'] = 'test-model';
@@ -109,11 +109,11 @@ describe('AuthDialog', () => {
       );
 
       expect(lastFrame()).toContain(
-        'Custom LLM configuration detected (CUSTOM_LLM_*)',
+        'Custom LLM configuration detected (TIE_*)',
       );
     });
 
-    it('should not show the CUSTOM_LLM message if GEMINI_DEFAULT_AUTH_TYPE is set to something else', () => {
+    it('should not show the TIE_LLM message if GEMINI_DEFAULT_AUTH_TYPE is set to something else', () => {
       process.env['TIE_API_KEY'] = 'test-key';
       process.env['TIE_ENDPOINT'] = 'https://api.example.com';
       process.env['TIE_MODEL_NAME'] = 'test-model';
@@ -149,15 +149,15 @@ describe('AuthDialog', () => {
       );
 
       expect(lastFrame()).not.toContain(
-        'Custom LLM configuration detected (CUSTOM_LLM_*)',
+        'Custom LLM configuration detected (TIE_*)',
       );
     });
 
-    it('should show the CUSTOM_LLM message if GEMINI_DEFAULT_AUTH_TYPE is set to custom LLM', () => {
+    it('should show the TIE_LLM message if GEMINI_DEFAULT_AUTH_TYPE is set to custom LLM', () => {
       process.env['TIE_API_KEY'] = 'test-key';
       process.env['TIE_ENDPOINT'] = 'https://api.example.com';
       process.env['TIE_MODEL_NAME'] = 'test-model';
-      process.env['GEMINI_DEFAULT_AUTH_TYPE'] = AuthType.CUSTOM_LLM;
+      process.env['GEMINI_DEFAULT_AUTH_TYPE'] = AuthType.TIE_LLM;
 
       const settings: LoadedSettings = new LoadedSettings(
         {
@@ -189,7 +189,7 @@ describe('AuthDialog', () => {
       );
 
       expect(lastFrame()).toContain(
-        'Custom LLM configuration detected (CUSTOM_LLM_*)',
+        'Custom LLM configuration detected (TIE_*)',
       );
     });
   });
@@ -376,7 +376,7 @@ describe('AuthDialog', () => {
         <AuthDialog onSelect={() => {}} settings={settings} />,
       );
 
-      // Default is CUSTOM_LLM (first option)
+      // Default is TIE_LLM (first option)
       expect(lastFrame()).toContain('● 1. Custom LLM API');
     });
 
@@ -416,7 +416,7 @@ describe('AuthDialog', () => {
         'Invalid value for GEMINI_DEFAULT_AUTH_TYPE: "invalid-auth-type"',
       );
 
-      // Default is CUSTOM_LLM (first option)
+      // Default is TIE_LLM (first option)
       expect(lastFrame()).toContain('● 1. Custom LLM API');
     });
   });

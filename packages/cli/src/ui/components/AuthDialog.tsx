@@ -62,9 +62,9 @@ export function AuthDialog({
       process.env['TIE_API_KEY'] &&
       process.env['TIE_ENDPOINT'] &&
       process.env['TIE_MODEL_NAME'] &&
-      (!defaultAuthType || defaultAuthType === AuthType.CUSTOM_LLM)
+      (!defaultAuthType || defaultAuthType === AuthType.TIE_LLM)
     ) {
-      return 'Custom LLM configuration detected (CUSTOM_LLM_*). Select "Custom LLM API" option to use it.';
+      return 'Custom LLM configuration detected (TIE_*). Select "Custom LLM API" option to use it.';
     }
 
     if (
@@ -78,7 +78,7 @@ export function AuthDialog({
   let items = [
     {
       label: 'Custom LLM API',
-      value: AuthType.CUSTOM_LLM,
+      value: AuthType.TIE_LLM,
     },
     {
       label: 'Login with Google',
@@ -123,7 +123,7 @@ export function AuthDialog({
       process.env['TIE_ENDPOINT'] &&
       process.env['TIE_MODEL_NAME']
     ) {
-      return item.value === AuthType.CUSTOM_LLM;
+      return item.value === AuthType.TIE_LLM;
     }
 
     if (process.env['GEMINI_API_KEY']) {
@@ -162,14 +162,14 @@ export function AuthDialog({
     }
 
     // 验证配置
-    const error = await validateAuthMethod(AuthType.CUSTOM_LLM);
+    const error = await validateAuthMethod(AuthType.TIE_LLM);
     if (error) {
       setErrorMessage(error);
       setShowCustomLLMConfig(false);
     } else {
       setErrorMessage(null);
       setShowCustomLLMConfig(false);
-      onSelect(AuthType.CUSTOM_LLM, SettingScope.User);
+      onSelect(AuthType.TIE_LLM, SettingScope.User);
     }
   };
 
@@ -196,7 +196,7 @@ export function AuthDialog({
   const handleAuthSelect = async (authMethod: AuthType) => {
     setHasUserSelected(true);
 
-    if (authMethod === AuthType.CUSTOM_LLM) {
+    if (authMethod === AuthType.TIE_LLM) {
       // 检查是否已经有完整的环境变量配置
       const hasCompleteConfig =
         process.env['TIE_API_KEY'] &&

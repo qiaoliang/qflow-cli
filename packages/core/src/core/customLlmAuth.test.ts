@@ -20,12 +20,12 @@ describe('customLlmAuth', () => {
     delete process.env['TIE_API_KEY'];
     delete process.env['TIE_ENDPOINT'];
     delete process.env['TIE_MODEL_NAME'];
-    delete process.env['CUSTOM_LLM_TEMPERATURE'];
-    delete process.env['CUSTOM_LLM_MAX_TOKENS'];
-    delete process.env['CUSTOM_LLM_TOP_P'];
-    delete process.env['CUSTOM_LLM_TIMEOUT'];
-    delete process.env['CUSTOM_LLM_RETRIES'];
-    delete process.env['CUSTOM_LLM_STREAM_ENABLED'];
+    delete process.env['TIE_TEMPERATURE'];
+    delete process.env['TIE_MAX_TOKENS'];
+    delete process.env['TIE_TOP_P'];
+    delete process.env['TIE_TIMEOUT'];
+    delete process.env['TIE_RETRIES'];
+    delete process.env['TIE_STREAM_ENABLED'];
   });
 
   afterEach(() => {
@@ -75,12 +75,12 @@ describe('customLlmAuth', () => {
       process.env['TIE_API_KEY'] = 'test-key';
       process.env['TIE_ENDPOINT'] = 'https://api.example.com';
       process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
-      process.env['CUSTOM_LLM_TEMPERATURE'] = '0.5';
-      process.env['CUSTOM_LLM_MAX_TOKENS'] = '1024';
-      process.env['CUSTOM_LLM_TOP_P'] = '0.8';
-      process.env['CUSTOM_LLM_TIMEOUT'] = '60000';
-      process.env['CUSTOM_LLM_RETRIES'] = '5';
-      process.env['CUSTOM_LLM_STREAM_ENABLED'] = 'false';
+      process.env['TIE_TEMPERATURE'] = '0.5';
+      process.env['TIE_MAX_TOKENS'] = '1024';
+      process.env['TIE_TOP_P'] = '0.8';
+      process.env['TIE_TIMEOUT'] = '60000';
+      process.env['TIE_RETRIES'] = '5';
+      process.env['TIE_STREAM_ENABLED'] = 'false';
 
       const config = loadCustomLlmConfig();
       expect(config).toEqual({
@@ -100,10 +100,10 @@ describe('customLlmAuth', () => {
       process.env['TIE_API_KEY'] = 'test-key';
       process.env['TIE_ENDPOINT'] = 'https://api.example.com';
       process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
-      process.env['CUSTOM_LLM_TEMPERATURE'] = '3.0';
+      process.env['TIE_TEMPERATURE'] = '3.0';
 
       expect(() => loadCustomLlmConfig()).toThrow(
-        'CUSTOM_LLM_TEMPERATURE must be between 0 and 2',
+        'TIE_TEMPERATURE must be between 0 and 2',
       );
     });
 
@@ -111,10 +111,10 @@ describe('customLlmAuth', () => {
       process.env['TIE_API_KEY'] = 'test-key';
       process.env['TIE_ENDPOINT'] = 'https://api.example.com';
       process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
-      process.env['CUSTOM_LLM_MAX_TOKENS'] = '200000';
+      process.env['TIE_MAX_TOKENS'] = '200000';
 
       expect(() => loadCustomLlmConfig()).toThrow(
-        'CUSTOM_LLM_MAX_TOKENS must be between 1 and 100000',
+        'TIE_MAX_TOKENS must be between 1 and 100000',
       );
     });
 
@@ -122,10 +122,10 @@ describe('customLlmAuth', () => {
       process.env['TIE_API_KEY'] = 'test-key';
       process.env['TIE_ENDPOINT'] = 'https://api.example.com';
       process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
-      process.env['CUSTOM_LLM_TOP_P'] = '1.5';
+      process.env['TIE_TOP_P'] = '1.5';
 
       expect(() => loadCustomLlmConfig()).toThrow(
-        'CUSTOM_LLM_TOP_P must be between 0 and 1',
+        'TIE_TOP_P must be between 0 and 1',
       );
     });
 
@@ -133,10 +133,10 @@ describe('customLlmAuth', () => {
       process.env['TIE_API_KEY'] = 'test-key';
       process.env['TIE_ENDPOINT'] = 'https://api.example.com';
       process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
-      process.env['CUSTOM_LLM_TIMEOUT'] = '500';
+      process.env['TIE_TIMEOUT'] = '500';
 
       expect(() => loadCustomLlmConfig()).toThrow(
-        'CUSTOM_LLM_TIMEOUT must be at least 1000ms',
+        'TIE_TIMEOUT must be at least 1000ms',
       );
     });
 
@@ -144,10 +144,10 @@ describe('customLlmAuth', () => {
       process.env['TIE_API_KEY'] = 'test-key';
       process.env['TIE_ENDPOINT'] = 'https://api.example.com';
       process.env['TIE_MODEL_NAME'] = 'gpt-3.5-turbo';
-      process.env['CUSTOM_LLM_RETRIES'] = '15';
+      process.env['TIE_RETRIES'] = '15';
 
       expect(() => loadCustomLlmConfig()).toThrow(
-        'CUSTOM_LLM_RETRIES must be between 0 and 10',
+        'TIE_RETRIES must be between 0 and 10',
       );
     });
   });

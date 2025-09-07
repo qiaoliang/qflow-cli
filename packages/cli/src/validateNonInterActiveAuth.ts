@@ -17,7 +17,7 @@ function getAuthTypeFromEnv(): AuthType | undefined {
     process.env['TIE_ENDPOINT'] &&
     process.env['TIE_MODEL_NAME']
   ) {
-    return AuthType.CUSTOM_LLM;
+    return AuthType.TIE_LLM;
   }
 
   // 2. 检查Gemini API Key

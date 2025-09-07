@@ -681,7 +681,7 @@ export function loadSettings(
     if (!userSettings.security.auth) {
       userSettings.security.auth = {};
     }
-    userSettings.security.auth.selectedType = AuthType.CUSTOM_LLM;
+    userSettings.security.auth.selectedType = AuthType.TIE_LLM;
   }
 
   // Create LoadedSettings first

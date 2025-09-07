@@ -74,7 +74,7 @@ describe('validateAuthMethod', () => {
     });
   });
 
-  describe('CUSTOM_LLM', () => {
+  describe('TIE_LLM', () => {
     beforeEach(() => {
       vi.stubEnv('TIE_API_KEY', undefined);
       vi.stubEnv('TIE_ENDPOINT', undefined);
@@ -85,27 +85,27 @@ describe('validateAuthMethod', () => {
       vi.stubEnv('TIE_API_KEY', 'test-api-key');
       vi.stubEnv('TIE_ENDPOINT', 'https://api.example.com');
       vi.stubEnv('TIE_MODEL_NAME', 'test-model');
-      expect(await validateAuthMethod(AuthType.CUSTOM_LLM)).toBeNull();
+      expect(await validateAuthMethod(AuthType.TIE_LLM)).toBeNull();
     });
 
     it('should return error message if TIE_API_KEY is missing', async () => {
       vi.stubEnv('TIE_ENDPOINT', 'https://api.example.com');
       vi.stubEnv('TIE_MODEL_NAME', 'test-model');
-      const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
+      const result = await validateAuthMethod(AuthType.TIE_LLM);
       expect(result).toContain('TIE_API_KEY is required');
     });
 
     it('should return error message if TIE_ENDPOINT is missing', async () => {
       vi.stubEnv('TIE_API_KEY', 'test-api-key');
       vi.stubEnv('TIE_MODEL_NAME', 'test-model');
-      const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
+      const result = await validateAuthMethod(AuthType.TIE_LLM);
       expect(result).toContain('TIE_ENDPOINT is required');
     });
 
     it('should return error message if TIE_MODEL_NAME is missing', async () => {
       vi.stubEnv('TIE_API_KEY', 'test-api-key');
       vi.stubEnv('TIE_ENDPOINT', 'https://api.example.com');
-      const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
+      const result = await validateAuthMethod(AuthType.TIE_LLM);
       expect(result).toContain('TIE_MODEL_NAME is required');
     });
 
@@ -113,7 +113,7 @@ describe('validateAuthMethod', () => {
       vi.stubEnv('TIE_API_KEY', 'test-api-key');
       vi.stubEnv('TIE_ENDPOINT', 'invalid-url');
       vi.stubEnv('TIE_MODEL_NAME', 'test-model');
-      const result = await validateAuthMethod(AuthType.CUSTOM_LLM);
+      const result = await validateAuthMethod(AuthType.TIE_LLM);
       expect(result).toContain('TIE_ENDPOINT must be a valid URL');
     });
   });
