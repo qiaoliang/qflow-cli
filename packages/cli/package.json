@@ -1,10 +1,10 @@
 {
   "name": "@tiecode/tie-cli",
-  "version": "0.3.1",
-  "description": "Gemini CLI",
+  "version": "0.3.2",
+  "description": "Tie CLI",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/google-gemini/gemini-cli.git"
+    "url": "git+https://github.com/qiaoliang/tie-cli.git"
   },
   "type": "module",
   "main": "dist/index.js",
@@ -25,7 +25,7 @@
     "dist"
   ],
   "config": {
-    "sandboxImageUri": "us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.3.1"
+    "sandboxImageUri": "us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:"
   },
   "dependencies": {
     "@tiecode/tie-cli-core": "file:../core",
