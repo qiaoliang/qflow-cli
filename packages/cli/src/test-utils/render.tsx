@@ -9,7 +9,11 @@ import type React from 'react';
 import { vi } from 'vitest';
 import { KeypressProvider } from '../ui/contexts/KeypressContext.js';
 import { UIActionsContext } from '../ui/contexts/UIActionsContext.js';
+import { SettingsContext } from '../ui/contexts/SettingsContext.js';
+import { ConfigContext } from '../ui/contexts/ConfigContext.js';
 import type { UIActions } from '../ui/contexts/UIActionsContext.js';
+import type { LoadedSettings } from '../config/settings.js';
+import type { Config } from '@tiecode/tie-cli-core';
 
 const mockUIActions: UIActions = {
   handleThemeSelect: vi.fn(),
@@ -35,13 +39,32 @@ const mockUIActions: UIActions = {
   handleProQuotaChoice: vi.fn(),
 };
 
+const mockSettings: LoadedSettings = {
+  merged: {
+    security: {
+      auth: {},
+    },
+  },
+  setValue: vi.fn(),
+} as LoadedSettings;
+
+const mockConfig: Config = {
+  isBrowserLaunchSuppressed: vi.fn().mockReturnValue(false),
+  getScreenReader: vi.fn().mockReturnValue(false),
+  getGeminiMdFileCount: vi.fn().mockReturnValue(0),
+} as Config;
+
 export const renderWithProviders = (
   component: React.ReactElement,
 ): ReturnType<typeof render> =>
   render(
     <KeypressProvider kittyProtocolEnabled={true}>
       <UIActionsContext.Provider value={mockUIActions}>
-        {component}
+        <SettingsContext.Provider value={mockSettings}>
+          <ConfigContext.Provider value={mockConfig}>
+            {component}
+          </ConfigContext.Provider>
+        </SettingsContext.Provider>
       </UIActionsContext.Provider>
     </KeypressProvider>,
   );
