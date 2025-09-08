@@ -39,20 +39,20 @@ const mockUIActions: UIActions = {
   handleProQuotaChoice: vi.fn(),
 };
 
-const mockSettings: LoadedSettings = {
+const mockSettings = {
   merged: {
     security: {
       auth: {},
     },
   },
   setValue: vi.fn(),
-} as LoadedSettings;
+} as unknown as LoadedSettings;
 
-const mockConfig: Config = {
+const mockConfig = {
   isBrowserLaunchSuppressed: vi.fn().mockReturnValue(false),
   getScreenReader: vi.fn().mockReturnValue(false),
   getGeminiMdFileCount: vi.fn().mockReturnValue(0),
-} as Config;
+} as unknown as Config;
 
 export const renderWithProviders = (
   component: React.ReactElement,
