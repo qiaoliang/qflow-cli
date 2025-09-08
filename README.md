@@ -34,12 +34,6 @@ npx https://github.com/google-gemini/tie-cli
 npm install -g @tiecode@tie-cli
 ```
 
-#### Install globally with Homebrew (macOS/Linux)
-
-```bash
-brew install tie-cli
-```
-
 #### System Requirements
 
 - Node.js version 20 or higher
@@ -51,26 +45,10 @@ See [Releases](./docs/releases.md) for more details.
 
 ### Preview
 
-New preview releases will be published each week at UTC 2359 on Tuesdays. These releases will not have been fully vetted and may contain regressions or other outstanding issues. Please help us test and install with `preview` tag.
-
-```bash
-npm install -g @tiecode@tie-cli@preview
-```
-
-### Stable
-
-- New stable releases will be published each week at UTC 2000 on Tuesdays, this will be the full promotion of last week's `preview` release + any bug fixes and validations. Use `latest` tag.
+- New preview releases will be published each week at UTC 2000 on Tuesdays, this will be the full promotion of last week's `preview` release + any bug fixes and validations. Use `latest` tag.
 
 ```bash
 npm install -g @tiecode@tie-cli@latest
-```
-
-### Nightly
-
-- New releases will be published each week at UTC 0000 each day, This will be all changes from the main branch as represented at time of release. It should be assumed there are pending validations and issues. Use `nightly` tag.
-
-```bash
-npm install -g @tiecode@tie-cli@nightly
 ```
 
 ## 📋 Key Features
@@ -91,7 +69,7 @@ npm install -g @tiecode@tie-cli@nightly
 
 - Ground your queries with built-in [Google Search](https://ai.google.dev/gemini-api/docs/grounding) for real-time information
 - Conversation checkpointing to save and resume complex sessions
-- Custom context files (GEMINI.md) to tailor behavior for your projects
+- Custom context files (TIE.md) to tailor behavior for your projects
 
 ### GitHub Integration
 
@@ -105,6 +83,16 @@ Integrate Gemini CLI directly into your GitHub workflows with [**Gemini CLI GitH
 ## 🔐 Authentication Options
 
 Choose the authentication method that best fits your needs:
+
+### Option 0: TIE login(Using your own LLM API_KEY)
+
+**✨ Best for:** Individual developers as well as anyone who has his own LLM API Key. There are 3 Environment Variables for it.
+
+```bash
+TIE_API_KEY="sk-xdxym-*"
+TIE_ENDPOINT="https://ai.example.com"
+TIE_MODEL_NAME="Qwen/Qwen3-8B"
+```
 
 ### Option 1: OAuth login (Using your Google Account)
 
@@ -226,7 +214,7 @@ gemini
 
 - [**Commands Reference**](./docs/cli/commands.md) - All slash commands (`/help`, `/chat`, `/mcp`, etc.)
 - [**Checkpointing**](./docs/checkpointing.md) - Save and resume conversations
-- [**Memory Management**](./docs/tools/memory.md) - Using GEMINI.md context files
+- [**Memory Management**](./docs/tools/memory.md) - Using TIE.md context files
 - [**Token Caching**](./docs/cli/token-caching.md) - Optimize token usage
 
 ### Tools & Extensions
@@ -288,8 +276,7 @@ Check our [Official Roadmap](https://github.com/orgs/google-gemini/projects/11/)
 
 ## 📖 Resources
 
-- **[Official Roadmap](./ROADMAP.md)** - See what's coming next
-- **[NPM Package](https://www.npmjs.com/package/@google/gemini-cli)** - Package registry
+- **[NPM Package](https://www.npmjs.com/package/@qiaoliang/tie-cli)** - Package registry
 - **[GitHub Issues](https://github.com/qiaoliang/tie-cli/issues)** - Report bugs or request features
 - **[Security Advisories](https://github.com/qiaoliang/tie-cli/security/advisories)** - Security updates
 
@@ -302,9 +289,3 @@ See the [Uninstall Guide](docs/Uninstall.md) for removal instructions.
 - **License**: [Apache License 2.0](LICENSE)
 - **Terms of Service**: [Terms & Privacy](./docs/tos-privacy.md)
 - **Security**: [Security Policy](SECURITY.md)
-
----
-
-<p align="center">
-  Built with ❤️ by Google and the open source community
-</p>

@@ -1,10 +1,6 @@
 # Tie CLI（中文）
 
-[![Gemini CLI CI](https://github.com/qiaoliang/tie-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/qiaoliang/tie-cli/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/npm/v/@qiaoliang/tie-cli)](https://www.npmjs.com/package/@qiaoliang/tie-cli)
-[![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/qiaoliang/tie-cli/blob/main/LICENSE)
-
-![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
+![TIE CLI Screenshot](./docs/assets/gemini-screenshot.png)
 
 Tie CLI 是一个开源的终端 AI Agent，让你在命令行里直接使用强大的 Gemini 能力。它为开发者提供轻量、直接、可扩展的 AI 工作流。
 
@@ -269,5 +265,3 @@ tie
 - **许可证**： [Apache License 2.0](LICENSE)
 - **服务条款**： [Terms & Privacy](./docs/tos-privacy.md)
 - **安全**： [Security Policy](SECURITY.md)
-
-

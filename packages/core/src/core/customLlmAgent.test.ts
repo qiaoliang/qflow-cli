@@ -161,7 +161,7 @@ describe('CustomLLMAgent', () => {
       );
     });
 
-    it('应该在自定义LLM失败时回退到Gemini', async () => {
+    it('应该在自定义LLM失败时直接抛错（不回退到Gemini）', async () => {
       const failingCustomGenerator = new MockContentGenerator(true);
       const agent = new CustomLLMAgent(geminiGenerator, failingCustomGenerator);
 
@@ -177,13 +177,12 @@ describe('CustomLLMAgent', () => {
 
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      const result = await agent.generateContent(request, 'test-prompt-id');
+      await expect(
+        agent.generateContent(request, 'test-prompt-id'),
+      ).rejects.toThrowError();
 
-      expect(result.candidates?.[0]?.content?.parts?.[0]?.text).toBe(
-        'Mock response',
-      );
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('自定义LLM调用失败，回退到Gemini'),
+        expect.stringContaining('自定义LLM调用失败：'),
       );
 
       consoleSpy.mockRestore();
@@ -244,7 +243,7 @@ describe('CustomLLMAgent', () => {
       );
     });
 
-    it('应该在自定义LLM流式响应失败时回退到Gemini', async () => {
+    it('应该在自定义LLM流式响应失败时直接抛错（不回退到Gemini）', async () => {
       const failingCustomGenerator = new MockContentGenerator(true);
       const agent = new CustomLLMAgent(geminiGenerator, failingCustomGenerator);
 
@@ -260,19 +259,12 @@ describe('CustomLLMAgent', () => {
 
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      const stream = await agent.generateContentStream(
-        request,
-        'test-prompt-id',
-      );
-      const results: GenerateContentResponse[] = [];
+      await expect(
+        agent.generateContentStream(request, 'test-prompt-id'),
+      ).rejects.toThrowError();
 
-      for await (const response of stream) {
-        results.push(response);
-      }
-
-      expect(results).toHaveLength(2);
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('自定义LLM调用失败，回退到Gemini'),
+        expect.stringContaining('自定义LLM调用失败：'),
       );
 
       consoleSpy.mockRestore();
@@ -296,7 +288,7 @@ describe('CustomLLMAgent', () => {
       expect(result.totalTokens).toBe(10);
     });
 
-    it('应该在自定义LLM失败时回退到Gemini', async () => {
+    it('应该在自定义LLM失败时直接抛错（不回退到Gemini）', async () => {
       const failingCustomGenerator = new MockContentGenerator(true);
       const agent = new CustomLLMAgent(geminiGenerator, failingCustomGenerator);
 
@@ -312,11 +304,10 @@ describe('CustomLLMAgent', () => {
 
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      const result = await agent.countTokens(request);
+      await expect(agent.countTokens(request)).rejects.toThrowError();
 
-      expect(result.totalTokens).toBe(10);
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('自定义LLM调用失败，回退到Gemini'),
+        expect.stringContaining('自定义LLM调用失败：'),
       );
 
       consoleSpy.mockRestore();
@@ -335,7 +326,7 @@ describe('CustomLLMAgent', () => {
       expect(result.embeddings?.[0]?.values).toEqual([0.1, 0.2, 0.3]);
     });
 
-    it('应该在自定义LLM失败时回退到Gemini', async () => {
+    it('应该在自定义LLM失败时直接抛错（不回退到Gemini）', async () => {
       const failingCustomGenerator = new MockContentGenerator(true);
       const agent = new CustomLLMAgent(geminiGenerator, failingCustomGenerator);
 
@@ -346,11 +337,10 @@ describe('CustomLLMAgent', () => {
 
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      const result = await agent.embedContent(request);
+      await expect(agent.embedContent(request)).rejects.toThrowError();
 
-      expect(result.embeddings?.[0]?.values).toEqual([0.1, 0.2, 0.3]);
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('自定义LLM调用失败，回退到Gemini'),
+        expect.stringContaining('自定义LLM调用失败：'),
       );
 
       consoleSpy.mockRestore();
@@ -377,7 +367,7 @@ describe('CustomLLMAgent', () => {
   });
 
   describe('错误处理', () => {
-    it('应该正确处理非Error类型的异常', async () => {
+    it('应该正确处理非Error类型的异常（直接抛错且不回退）', async () => {
       const customGenerator = {
         generateContent: vi.fn().mockRejectedValue('String error'),
       } as unknown as ContentGenerator;
@@ -396,15 +386,11 @@ describe('CustomLLMAgent', () => {
 
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      const result = await agent.generateContent(request, 'test-prompt-id');
-
-      expect(result.candidates?.[0]?.content?.parts?.[0]?.text).toBe(
-        'Mock response',
-      );
+      await expect(
+        agent.generateContent(request, 'test-prompt-id'),
+      ).rejects.toThrowError();
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining(
-          '自定义LLM调用失败，回退到Gemini: String error',
-        ),
+        expect.stringContaining('自定义LLM调用失败：'),
       );
 
       consoleSpy.mockRestore();

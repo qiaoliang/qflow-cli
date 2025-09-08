@@ -703,6 +703,33 @@ export class GeminiClient {
       try {
         return JSON.parse(candidateText);
       } catch (parseError) {
+        // Fallback: try to normalize common pseudo-JSON to strict JSON
+        const normalizeLooseJson = (input: string): string => {
+          let s = input;
+          // Replace single quotes around strings with double quotes
+          // Only replaces when they look like string literals: '...'
+          s = s.replace(/'([^'\\]*(?:\\.[^'\\]*)*)'/g, '"$1"');
+
+          // Quote unquoted object keys: { key: value, another_key: value }
+          // Matches after { or , then optional spaces, then an unquoted key (letters, digits, underscore), then spaces, then :
+          s = s.replace(
+            /([\{,]\s*)([A-Za-z_][A-Za-z0-9_]*)(\s*:\s*)/g,
+            '$1"$2"$3',
+          );
+
+          // Remove trailing commas before } or ]
+          s = s.replace(/,\s*(\}|\])/g, '$1');
+
+          return s;
+        };
+
+        try {
+          const normalized = normalizeLooseJson(candidateText);
+          return JSON.parse(normalized);
+        } catch (_) {
+          // continue to report original error below
+        }
+
         await reportError(
           parseError,
           'Failed to parse JSON response from generateJson.',

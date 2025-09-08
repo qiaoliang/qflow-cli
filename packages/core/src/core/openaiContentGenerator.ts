@@ -20,6 +20,21 @@ import type { UserTierId } from '../code_assist/types.js';
 /**
  * OpenAI API请求格式
  */
+interface JsonObjectResponseFormat {
+  type: 'json_object';
+}
+
+interface JsonSchemaResponseFormat {
+  type: 'json_schema';
+  json_schema: {
+    name: string;
+    schema: Record<string, unknown>;
+    strict?: boolean;
+  };
+}
+
+type OpenAIResponseFormat = JsonObjectResponseFormat | JsonSchemaResponseFormat;
+
 interface OpenAIRequest {
   model: string;
   messages: Array<{
@@ -30,9 +45,7 @@ interface OpenAIRequest {
   max_tokens?: number;
   top_p?: number;
   stream?: boolean;
-  response_format?: {
-    type: 'json_object';
-  };
+  response_format?: OpenAIResponseFormat;
 }
 
 /**
@@ -287,9 +300,42 @@ export class OpenAIContentGenerator implements ContentGenerator {
     }
 
     // 处理JSON响应模式
-    let responseFormat: { type: 'json_object' } | undefined = undefined;
-    if (request.config?.responseMimeType === 'application/json') {
+    let responseFormat: OpenAIResponseFormat | undefined = undefined;
+    const wantsJson = request.config?.responseMimeType === 'application/json';
+    const schema = (
+      request.config as
+        | { responseJsonSchema?: Record<string, unknown> }
+        | undefined
+    )?.responseJsonSchema;
+
+    if (wantsJson && schema && Object.keys(schema).length > 0) {
+      // 优先使用 json_schema，部分提供商支持严格模式可避免非JSON文本
+      responseFormat = {
+        type: 'json_schema',
+        json_schema: {
+          name: 'tie_output',
+          schema,
+          strict: true,
+        },
+      };
+    } else if (wantsJson) {
       responseFormat = { type: 'json_object' };
+    }
+
+    // 附加严格JSON输出的系统约束，帮助不完全支持 response_format 的提供商仍返回纯JSON
+    if (wantsJson) {
+      const jsonConstraintLines: string[] = [
+        'You must respond with ONLY valid JSON. No prose, no markdown, no code fences.',
+      ];
+      if (schema && Object.keys(schema).length > 0) {
+        jsonConstraintLines.push(
+          'The JSON MUST strictly conform to this JSON Schema and contain no additional keys or commentary.',
+        );
+      }
+      messages.push({
+        role: 'system',
+        content: jsonConstraintLines.join('\n'),
+      });
     }
 
     return {
@@ -525,7 +571,7 @@ export class OpenAIContentGenerator implements ContentGenerator {
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
 
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      let response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -534,6 +580,37 @@ export class OpenAIContentGenerator implements ContentGenerator {
         body: JSON.stringify(data),
         signal: controller.signal,
       });
+
+      // 针对不支持 json_schema 的提供商做一次性回退
+      if (
+        !response.ok &&
+        response.status === 400 &&
+        data.response_format?.type === 'json_schema'
+      ) {
+        const errorText = await response.text();
+        const maybeResponseFormatUnsupported =
+          /response_format|json_schema|schema/i.test(errorText);
+        if (maybeResponseFormatUnsupported) {
+          const fallbackRequest: OpenAIRequest = {
+            ...data,
+            response_format: { type: 'json_object' },
+          };
+          response = await fetch(`${this.baseUrl}${endpoint}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.config.apiKey}`,
+            },
+            body: JSON.stringify(fallbackRequest),
+            signal: controller.signal,
+          });
+        } else {
+          // 不是response_format相关错误，按原样抛出
+          throw new Error(
+            `HTTP ${response.status}: ${response.statusText}\n${errorText}`,
+          );
+        }
+      }
 
       clearTimeout(timeoutId);
 

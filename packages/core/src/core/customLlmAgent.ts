@@ -18,7 +18,7 @@ import type { UserTierId } from '../code_assist/types.js';
 /**
  * 自定义LLM代理类，实现装饰器模式
  *
- * 优先使用自定义LLM，失败时优雅降级到Gemini
+ * 优先使用自定义LLM；如果已配置自定义LLM且调用失败，则直接抛错，不回退到Gemini
  * 保持所有现有功能和接口不变
  */
 export class CustomLLMAgent implements ContentGenerator {
@@ -34,7 +34,7 @@ export class CustomLLMAgent implements ContentGenerator {
   }
 
   /**
-   * 生成内容，优先使用自定义LLM，失败时回退到Gemini
+   * 生成内容，优先使用自定义LLM（失败不回退到Gemini）
    */
   async generateContent(
     request: GenerateContentParameters,
@@ -47,7 +47,7 @@ export class CustomLLMAgent implements ContentGenerator {
   }
 
   /**
-   * 生成流式内容，优先使用自定义LLM，失败时回退到Gemini
+   * 生成流式内容，优先使用自定义LLM（失败不回退到Gemini）
    */
   async generateContentStream(
     request: GenerateContentParameters,
@@ -60,7 +60,7 @@ export class CustomLLMAgent implements ContentGenerator {
   }
 
   /**
-   * 计算token数量，优先使用自定义LLM，失败时回退到Gemini
+   * 计算token数量，优先使用自定义LLM（失败不回退到Gemini）
    */
   async countTokens(
     request: CountTokensParameters,
@@ -72,7 +72,7 @@ export class CustomLLMAgent implements ContentGenerator {
   }
 
   /**
-   * 嵌入内容，优先使用自定义LLM，失败时回退到Gemini
+   * 嵌入内容，优先使用自定义LLM（失败不回退到Gemini）
    */
   async embedContent(
     request: EmbedContentParameters,
@@ -91,10 +91,12 @@ export class CustomLLMAgent implements ContentGenerator {
   }
 
   /**
-   * 尝试使用自定义LLM，失败时回退到Gemini
+   * 尝试使用自定义LLM。
+   * - 若未配置自定义LLM，则使用Gemini。
+   * - 若已配置自定义LLM且调用失败：直接抛错，不回退到Gemini。
    *
    * @param customOperation 自定义LLM操作
-   * @param fallbackOperation Gemini回退操作
+   * @param fallbackOperation Gemini操作（仅在未配置自定义LLM时使用）
    * @returns 操作结果
    */
   private async tryCustomLlm<T>(
@@ -110,13 +112,10 @@ export class CustomLLMAgent implements ContentGenerator {
       // 尝试使用自定义LLM
       return await customOperation();
     } catch (error) {
-      // 记录错误日志
-      console.warn(
-        `自定义LLM调用失败，回退到Gemini: ${error instanceof Error ? error.message : String(error)}`,
-      );
-
-      // 回退到Gemini
-      return fallbackOperation();
+      // 记录错误日志并抛出，不回退到Gemini
+      const message = `自定义LLM调用失败：${error instanceof Error ? error.message : String(error)}`;
+      console.warn(message);
+      throw error instanceof Error ? error : new Error(message);
     }
   }
 }
