@@ -527,10 +527,7 @@ describe('FileCommandLoader', () => {
       const projectCommandsDir = new Storage(
         process.cwd(),
       ).getProjectCommandsDir();
-      const extensionDir = path.join(
-        process.cwd(),
-        '.gemini/extensions/test-ext',
-      );
+      const extensionDir = path.join(process.cwd(), '.tie/extensions/test-ext');
 
       mock({
         [userCommandsDir]: {
@@ -580,10 +577,7 @@ describe('FileCommandLoader', () => {
       const projectCommandsDir = new Storage(
         process.cwd(),
       ).getProjectCommandsDir();
-      const extensionDir = path.join(
-        process.cwd(),
-        '.gemini/extensions/test-ext',
-      );
+      const extensionDir = path.join(process.cwd(), '.tie/extensions/test-ext');
 
       mock({
         [extensionDir]: {
@@ -678,11 +672,11 @@ describe('FileCommandLoader', () => {
     it('only loads commands from active extensions', async () => {
       const extensionDir1 = path.join(
         process.cwd(),
-        '.gemini/extensions/active-ext',
+        '.tie/extensions/active-ext',
       );
       const extensionDir2 = path.join(
         process.cwd(),
-        '.gemini/extensions/inactive-ext',
+        '.tie/extensions/inactive-ext',
       );
 
       mock({
@@ -737,7 +731,7 @@ describe('FileCommandLoader', () => {
     it('handles missing extension commands directory gracefully', async () => {
       const extensionDir = path.join(
         process.cwd(),
-        '.gemini/extensions/no-commands',
+        '.tie/extensions/no-commands',
       );
 
       mock({
@@ -769,7 +763,7 @@ describe('FileCommandLoader', () => {
     });
 
     it('handles nested command structure in extensions', async () => {
-      const extensionDir = path.join(process.cwd(), '.gemini/extensions/a');
+      const extensionDir = path.join(process.cwd(), '.tie/extensions/a');
 
       mock({
         [extensionDir]: {

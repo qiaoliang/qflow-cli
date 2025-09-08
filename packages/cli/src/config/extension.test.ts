@@ -117,7 +117,7 @@ describe('loadExtensions', () => {
     const ext1 = extensions.find((e) => e.config.name === 'ext1');
     const ext2 = extensions.find((e) => e.config.name === 'ext2');
     expect(ext1?.contextFiles).toEqual([
-      path.join(workspaceExtensionsDir, 'ext1', 'TIE.md'),
+      path.join(userExtensionsDir, 'ext1', 'TIE.md'),
     ]);
     expect(ext2?.contextFiles).toEqual([]);
   });

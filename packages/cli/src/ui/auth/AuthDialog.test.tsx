@@ -17,13 +17,10 @@ import {
 import { AuthDialog } from './AuthDialog.js';
 import { AuthType, type Config } from '@tiecode/tie-cli-core';
 import type { LoadedSettings } from '../../config/settings.js';
-import { SettingScope } from '../../config/settings.js';
-import { AuthState } from '../types.js';
+import type { AuthState } from '../types.js';
 import { RadioButtonSelect } from '../components/shared/RadioButtonSelect.js';
 import { useKeypress } from '../hooks/useKeypress.js';
 import { validateAuthMethod } from '../../config/auth.js';
-import { runExitCleanup } from '../../utils/cleanup.js';
-import { clearCachedCredentialFile } from '@tiecode/tie-cli-core';
 import { Text } from 'ink';
 
 // Mocks
@@ -63,8 +60,6 @@ vi.mock('../components/shared/RadioButtonSelect.js', () => ({
 const mockedUseKeypress = useKeypress as Mock;
 const mockedRadioButtonSelect = RadioButtonSelect as Mock;
 const mockedValidateAuthMethod = validateAuthMethod as Mock;
-const mockedRunExitCleanup = runExitCleanup as Mock;
-const mockedClearCachedCredentialFile = clearCachedCredentialFile as Mock;
 
 describe('AuthDialog', () => {
   let props: {

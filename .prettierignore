@@ -6,7 +6,7 @@
 .docker
 .DS_Store
 .env
-.gemini/
+.tie/
 .idea
 .integration-tests/
 *.iml

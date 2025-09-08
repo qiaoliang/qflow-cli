@@ -3,13 +3,13 @@
 .env~
 
 # gemini-cli settings
-.gemini/
+.tie/
 !gemini/config.yaml
 .cursor/
 .tie/
 TIE.md
 
-# Note: .gemini-clipboard/ is NOT in gitignore so Gemini can access pasted images
+# Note: .tie-clipboard/ is NOT in gitignore so Gemini can access pasted images
 
 # Dependency directory
 node_modules

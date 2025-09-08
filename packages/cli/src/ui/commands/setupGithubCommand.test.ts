@@ -183,8 +183,8 @@ describe('updateGitignore', () => {
   it('does not get confused by entries in comments or as substrings', async () => {
     const gitignorePath = path.join(scratchDir, '.gitignore');
     const existingContent = [
-      '# This is a comment mentioning .gemini/ folder',
-      'my-app.gemini/config',
+      '# This is a comment mentioning .tie/ folder',
+      'my-app.tie/config',
       '# Another comment with gha-creds-*.json pattern',
       'some-other-gha-creds-file.json',
       '',
@@ -206,7 +206,7 @@ describe('updateGitignore', () => {
       .filter((line) => line);
     expect(lines).toContain('.tie/');
     expect(lines).toContain('gha-creds-*.json');
-    expect(lines).toContain('my-app.gemini/config');
+    expect(lines).toContain('my-app.tie/config');
     expect(lines).toContain('some-other-gha-creds-file.json');
   });
 

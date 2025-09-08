@@ -239,7 +239,7 @@ describe('activate', () => {
 
       expect(executeCommandMock).toHaveBeenCalledWith(
         'workbench.extensions.installExtension',
-        'Google.gemini-cli-vscode-ide-companion',
+        'Google.tie-cli-vscode-ide-companion',
       );
     });
 
