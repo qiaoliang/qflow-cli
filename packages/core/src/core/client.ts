@@ -620,7 +620,7 @@ export class GeminiClient {
         authType: this.config.getContentGeneratorConfig()?.authType,
       });
 
-      let text = getResponseText(result);
+      const text = getResponseText(result);
       if (!text) {
         const error = new Error(
           'API returned an empty response for generateJson.',
@@ -634,26 +634,80 @@ export class GeminiClient {
         throw error;
       }
 
-      const prefix = '```json';
-      const suffix = '```';
-      if (text.startsWith(prefix) && text.endsWith(suffix)) {
-        logMalformedJsonResponse(
-          this.config,
-          new MalformedJsonResponseEvent(model),
-        );
-        text = text
-          .substring(prefix.length, text.length - suffix.length)
-          .trim();
+      // Normalize common markdown wrappers and extract probable JSON segment
+      const fencedCodeBlockRegex = /```(json|JSON)?[\s\S]*?```/g;
+      const anyFenceRegex = /```[\s\S]*?```/g;
+      const firstJsonLike = (input: string): string | null => {
+        // Prefer fenced blocks labeled as json
+        const fencedMatches = [...input.matchAll(fencedCodeBlockRegex)];
+        if (fencedMatches.length > 0) {
+          const raw = fencedMatches[0][0];
+          const inner = raw
+            .replace(/^```(json|JSON)?\n?/, '')
+            .replace(/```$/, '')
+            .trim();
+          return inner;
+        }
+        // Any fenced block fallback
+        const anyFence = input.match(anyFenceRegex);
+        if (anyFence && anyFence.length > 0) {
+          const inner = anyFence[0]
+            .replace(/^```\w*\n?/, '')
+            .replace(/```$/, '')
+            .trim();
+          return inner;
+        }
+        // Try to slice the first balanced JSON object or array
+        const startIdxObj = input.indexOf('{');
+        const startIdxArr = input.indexOf('[');
+        const startIdx =
+          startIdxObj === -1
+            ? startIdxArr
+            : startIdxArr === -1
+              ? startIdxObj
+              : Math.min(startIdxObj, startIdxArr);
+        if (startIdx === -1) {
+          return null;
+        }
+        // Attempt to find a balanced closing using a simple stack
+        const stack: string[] = [];
+        for (let i = startIdx; i < input.length; i++) {
+          const ch = input[i];
+          if (ch === '{' || ch === '[') stack.push(ch);
+          else if (ch === '}' || ch === ']') {
+            const last = stack.pop();
+            if (!last) break;
+            if (
+              stack.length === 0 &&
+              ((ch === '}' && last === '{') || (ch === ']' && last === '['))
+            ) {
+              return input.slice(startIdx, i + 1);
+            }
+          }
+        }
+        return input.slice(startIdx); // best-effort fallback
+      };
+
+      let candidateText = text.trim();
+      const extracted = firstJsonLike(candidateText);
+      if (extracted) {
+        if (extracted !== candidateText) {
+          logMalformedJsonResponse(
+            this.config,
+            new MalformedJsonResponseEvent(model),
+          );
+        }
+        candidateText = extracted;
       }
 
       try {
-        return JSON.parse(text);
+        return JSON.parse(candidateText);
       } catch (parseError) {
         await reportError(
           parseError,
           'Failed to parse JSON response from generateJson.',
           {
-            responseTextFailedToParse: text,
+            responseTextFailedToParse: candidateText,
             originalRequestContents: contents,
           },
           'generateJson-parse',

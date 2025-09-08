@@ -9,6 +9,7 @@ import { DEFAULT_GEMINI_FLASH_MODEL } from '../config/models.js';
 import type { GeminiClient } from '../core/client.js';
 import type { GeminiChat } from '../core/geminiChat.js';
 import { isFunctionResponse } from './messageInspectors.js';
+import { getResponseText } from './partUtils.js';
 
 const CHECK_PROMPT = `Analyze *only* the content and structure of your immediately preceding response (your last turn in the conversation history). Based *strictly* on that response, determine who should logically speak next: the 'user' or the 'model' (you).
 **Decision Rules (apply in order):**
@@ -124,6 +125,42 @@ export async function checkNextSpeaker(
     }
     return null;
   } catch (error) {
+    // 回退策略：改用严格文本输出，让模型仅返回 user 或 model
+    try {
+      const fallbackContents: Content[] = [
+        ...curatedHistory,
+        {
+          role: 'user',
+          parts: [
+            {
+              text: '只根据你上一次的回复判断下一位发言者，严格只输出 user 或 model 其中一个单词，不要输出其他内容、标点或解释。',
+            },
+          ],
+        },
+      ];
+      const response = await geminiClient.generateContent(
+        fallbackContents,
+        { maxOutputTokens: 5 },
+        abortSignal,
+        DEFAULT_GEMINI_FLASH_MODEL,
+      );
+      const text = (getResponseText(response) || '').trim().toLowerCase();
+      // 映射中文常见输出
+      const mapped =
+        text === 'user' || /用户/.test(text)
+          ? 'user'
+          : text === 'model' || /模型|助理|assistant/.test(text)
+            ? 'model'
+            : '';
+      if (mapped === 'user' || mapped === 'model') {
+        return {
+          reasoning: 'Fallback textual check succeeded.',
+          next_speaker: mapped as 'user' | 'model',
+        };
+      }
+    } catch (fallbackErr) {
+      // Ignore and fall through
+    }
     console.warn(
       'Failed to talk to Gemini endpoint when seeing if conversation should continue.',
       error,
